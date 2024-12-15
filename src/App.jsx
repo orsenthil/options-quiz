@@ -1,59 +1,14 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { AlertCircle, Loader } from "lucide-react";
+import ConceptQuiz from './components/ConceptQuiz';
+import ProfitLossChart from './components/ProfitLossChart';
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
-
-// eslint-disable-next-line react/prop-types
-const ProfitLossChart = ({ strikePrice, premium, currentPrice }) => {
-  const generateChartData = () => {
-    const data = [];
-    const minPrice = Math.floor(currentPrice * 0.8);
-    const maxPrice = Math.ceil(currentPrice * 1.2);
-
-    for (let price = minPrice; price <= maxPrice; price += 2) {
-      const pl = price > strikePrice
-          ? ((price - strikePrice) * 100) - (premium * 100)
-          : -premium * 100;
-
-      data.push({
-        price,
-        pl
-      });
-    }
-    return data;
-  };
-
-  return (
-      <div className="w-full h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={generateChartData()} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-            <Line type="monotone" dataKey="pl" stroke="#2563eb" strokeWidth={2} />
-            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-            <XAxis
-                dataKey="price"
-                label={{ value: "Stock Price ($)", position: "bottom" }}
-            />
-            <YAxis
-                label={{ value: "Profit/Loss ($)", angle: -90, position: "left" }}
-            />
-            <Tooltip
-                formatter={(value) => [`P/L: $${value.toFixed(2)}`, ""]}
-                labelFormatter={(label) => `Stock Price: $${label}`}
-            />
-            <ReferenceLine y={0} stroke="#666" strokeDasharray="3 3" />
-            <ReferenceLine x={strikePrice} stroke="#666" strokeDasharray="3 3" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-  );
-};
 
 const generatePriceLevels = (currentPrice) => {
   const prices = [];
@@ -78,7 +33,7 @@ const calculatePL = (stockPrice, strikePrice, premium) => {
   return pl.toFixed(2);
 };
 
-const OptionsQuiz = () => {
+const App = () => {
   const [symbol, setSymbol] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [loading, setLoading] = useState(false);
@@ -175,123 +130,149 @@ const OptionsQuiz = () => {
 
   return (
       <div className="min-h-screen bg-blue-50 p-8">
-        <Card className="max-w-2xl mx-auto bg-white">
+        <Card className="max-w-4xl mx-auto bg-white mb-8">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-blue-900">
-              Long Call Options Quiz
+              Options Trading Guide
             </CardTitle>
             <CardDescription>
-              Practice calculating break-even points using real market data
+              Learn options trading with interactive examples
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="symbol">Stock Symbol</Label>
-              <Input
-                  id="symbol"
-                  placeholder="e.g., AAPL"
-                  value={symbol}
-                  onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                  className="bg-blue-50"
+          <CardContent className="space-y-8">
+            {/* Concept Quiz Section */}
+            <div className="border-b pb-8">
+              <ConceptQuiz
+                  stockPrice={stockPrice}
+                  strikePrice={strikePrice}
+                  premium={premium}
+                  symbol={symbol}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="date">Select Date</Label>
-              <Input
-                  id="date"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="bg-blue-50"
-                  max={new Date().toISOString().split('T')[0]}
-              />
-            </div>
+            {/* Practical Calculator Section */}
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Practical Exercise</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Left column: Chart and Analysis */}
+                <div className="space-y-4">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-2">Sample P/L Analysis</h4>
+                    {stockPrice && strikePrice && premium ? (
+                        <>
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <span className="font-medium">Maximum Loss:</span>
+                              <p className="text-red-600">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">Break-even Price:</span>
+                              <p>${(parseFloat(strikePrice) + parseFloat(premium)).toFixed(2)}</p>
+                            </div>
+                          </div>
 
-            <Button
-                onClick={generateQuestion}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={loading}
-            >
-              {loading ? (
-                  <span className="flex items-center">
-                <Loader className="animate-spin mr-2" />
-                Loading...
-              </span>
-              ) : (
-                  'Generate Question'
-              )}
-            </Button>
+                          <ProfitLossChart
+                              strikePrice={parseFloat(strikePrice)}
+                              premium={parseFloat(premium)}
+                              currentPrice={parseFloat(stockPrice)}
+                          />
 
-            {feedback.show && (
-                <Alert className={feedback.correct ? "bg-green-50" : "bg-red-50"}>
-                  <AlertCircle className={feedback.correct ? "text-green-600" : "text-red-600"} />
-                  <AlertTitle className={feedback.correct ? "text-green-800" : "text-red-800"}>
-                    {feedback.correct ? "Question Generated" : "Error"}
-                  </AlertTitle>
-                  <AlertDescription className="whitespace-pre-line">
-                    {feedback.message}
-                  </AlertDescription>
-                </Alert>
-            )}
+                          <div className="mt-4">
+                            <h4 className="font-medium mb-2">P/L at different stock prices:</h4>
+                            <div className="grid grid-cols-3 gap-2">
+                              {generatePriceLevels(stockPrice).map(price => (
+                                  <div key={price} className="bg-white p-2 rounded">
+                                    <div className="text-sm">At ${price}</div>
+                                    <div className={calculatePL(price, strikePrice, premium) >= 0 ? "text-green-600" : "text-red-600"}>
+                                      ${calculatePL(price, strikePrice, premium)}
+                                    </div>
+                                  </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                    ) : (
+                        <p className="text-gray-500">Enter stock details to see analysis</p>
+                    )}
+                  </div>
+                </div>
 
-            {feedback.show && feedback.correct && (
-                <>
+                {/* Right column: Inputs and Question */}
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="answer">Your Answer ($)</Label>
+                    <Label htmlFor="symbol">Stock Symbol</Label>
                     <Input
-                        id="answer"
-                        type="number"
-                        step="0.01"
-                        placeholder="Enter your answer"
-                        value={userAnswer}
-                        onChange={(e) => setUserAnswer(e.target.value)}
+                        id="symbol"
+                        placeholder="e.g., AAPL"
+                        value={symbol}
+                        onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                         className="bg-blue-50"
                     />
-                    <Button
-                        onClick={checkAnswer}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      Check Answer
-                    </Button>
                   </div>
 
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h3 className="text-lg font-semibold mb-4">Profit/Loss Analysis</h3>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <span className="font-medium">Maximum Loss:</span>
-                        <p className="text-red-600">${(parseFloat(premium) * 100).toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Break-even Price:</span>
-                        <p>${(parseFloat(strikePrice) + parseFloat(premium)).toFixed(2)}</p>
-                      </div>
-                    </div>
-
-                    <ProfitLossChart
-                        strikePrice={parseFloat(strikePrice)}
-                        premium={parseFloat(premium)}
-                        currentPrice={parseFloat(stockPrice)}
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Select Date</Label>
+                    <Input
+                        id="date"
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="bg-blue-50"
+                        max={new Date().toISOString().split('T')[0]}
                     />
-
-                    <div className="mt-4">
-                      <h4 className="font-medium mb-2">P/L at different stock prices:</h4>
-                      <div className="grid grid-cols-3 gap-2">
-                        {generatePriceLevels(stockPrice).map(price => (
-                            <div key={price} className="bg-white p-2 rounded">
-                              <div className="text-sm">At ${price}</div>
-                              <div className={calculatePL(price, strikePrice, premium) >= 0 ? "text-green-600" : "text-red-600"}>
-                                ${calculatePL(price, strikePrice, premium)}
-                              </div>
-                            </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
-                </>
-            )}
+
+                  <Button
+                      onClick={generateQuestion}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={loading}
+                  >
+                    {loading ? (
+                        <span className="flex items-center">
+                      <Loader className="animate-spin mr-2" />
+                      Loading...
+                    </span>
+                    ) : (
+                        'Generate Question'
+                    )}
+                  </Button>
+
+                  {feedback.show && (
+                      <Alert className={feedback.correct ? "bg-green-50" : "bg-red-50"}>
+                        <AlertCircle className={feedback.correct ? "text-green-600" : "text-red-600"} />
+                        <AlertTitle className={feedback.correct ? "text-green-800" : "text-red-800"}>
+                          {feedback.correct ? "Question Generated" : "Error"}
+                        </AlertTitle>
+                        <AlertDescription className="whitespace-pre-line">
+                          {feedback.message}
+                        </AlertDescription>
+                      </Alert>
+                  )}
+
+                  {feedback.show && feedback.correct && (
+                      <div className="space-y-2">
+                        <Label htmlFor="answer">Your Answer ($)</Label>
+                        <Input
+                            id="answer"
+                            type="number"
+                            step="0.01"
+                            placeholder="Enter your answer"
+                            value={userAnswer}
+                            onChange={(e) => setUserAnswer(e.target.value)}
+                            className="bg-blue-50"
+                        />
+                        <Button
+                            onClick={checkAnswer}
+                            className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          Check Answer
+                        </Button>
+                      </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </CardContent>
 
           <CardFooter className="bg-blue-50 text-sm text-blue-800">
@@ -302,4 +283,4 @@ const OptionsQuiz = () => {
   );
 };
 
-export default OptionsQuiz;
+export default App;
