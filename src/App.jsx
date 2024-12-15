@@ -40,7 +40,6 @@ const App = () => {
   const [stockPrice, setStockPrice] = useState('');
   const [strikePrice, setStrikePrice] = useState('');
   const [premium, setPremium] = useState('');
-  const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState({ show: false, correct: false, message: '' });
 
   const fetchStockData = async () => {
@@ -98,32 +97,7 @@ const App = () => {
       setFeedback({
         show: true,
         correct: true,
-        message: `Question: If you buy a call option for ${symbol} on ${selectedDate} with:
-        Stock Price: $${stockPrice}
-        Strike Price: $${strikePrice}
-        Premium: $${premium}
-        
-        What's your break-even point?`
-      });
-    }
-  };
-
-  const checkAnswer = () => {
-    const correctAnswer = parseFloat(strikePrice) + parseFloat(premium);
-    const userGuess = parseFloat(userAnswer);
-
-    if (Math.abs(userGuess - correctAnswer) < 0.01) {
-      setFeedback({
-        show: true,
-        correct: true,
-        message: `Correct! The break-even point is $${correctAnswer.toFixed(2)}. 
-        Strike Price ($${strikePrice}) + Premium ($${premium}) = $${correctAnswer.toFixed(2)}`
-      });
-    } else {
-      setFeedback({
-        show: true,
-        correct: false,
-        message: `Try again! Hint: Add the strike price and premium together.`
+        message: ''
       });
     }
   };
@@ -133,32 +107,103 @@ const App = () => {
         <Card className="max-w-4xl mx-auto bg-white mb-8">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-blue-900">
-              Options Trading Guide
+              Long Call Options Trading Guide
             </CardTitle>
             <CardDescription>
-              Learn options trading with interactive examples
+              Learn long call options trading concepts with interactive examples
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* Concept Quiz Section */}
-            <div className="border-b pb-8">
-              <ConceptQuiz
-                  stockPrice={stockPrice}
-                  strikePrice={strikePrice}
-                  premium={premium}
-                  symbol={symbol}
-              />
-            </div>
-
-            {/* Practical Calculator Section */}
+            {/* Stock Selection and P/L Analysis */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Practical Exercise</h3>
+              <h3 className="text-xl font-semibold mb-4">Options Analysis Tool</h3>
               <div className="grid md:grid-cols-2 gap-8">
-                {/* Left column: Chart and Analysis */}
+                {/* Left column: Stock Selection */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="symbol">Stock Symbol</Label>
+                    <Input
+                        id="symbol"
+                        placeholder="e.g., AAPL"
+                        value={symbol}
+                        onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+                        className="bg-blue-50"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Select Date</Label>
+                    <Input
+                        id="date"
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="bg-blue-50"
+                        max={new Date().toISOString().split('T')[0]}
+                    />
+                  </div>
+
+                  <Button
+                      onClick={generateQuestion}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={loading}
+                  >
+                    {loading ? (
+                        <span className="flex items-center">
+              <Loader className="animate-spin mr-2" />
+              Loading...
+            </span>
+                    ) : (
+                        'Analyze Stock'
+                    )}
+                  </Button>
+
+                  {/* New Information Section */}
+                  {stockPrice && strikePrice && premium && (
+                      <div className="bg-blue-50 p-4 rounded-lg space-y-2">
+                        <h4 className="font-medium text-blue-900">Option Details:</h4>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                          <div>
+                            <span className="text-sm text-gray-600">Stock Price:</span>
+                            <p className="font-medium">${stockPrice}</p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-600">Strike Price:</span>
+                            <p className="font-medium">${strikePrice}</p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-600">Option Premium:</span>
+                            <p className="font-medium">${premium} per share</p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-600">Total Cost:</span>
+                            <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                          </div>
+                          <div className="col-span-2">
+                            <span className="text-sm text-gray-600">Expiration Date:</span>
+                            <p className="font-medium">{selectedDate}</p>
+                          </div>
+                        </div>
+                      </div>
+                  )}
+
+                  {feedback.show && !feedback.correct && (
+                      <Alert className="bg-red-50">
+                        <AlertCircle className="text-red-600" />
+                        <AlertTitle className="text-red-800">Error</AlertTitle>
+                        <AlertDescription className="whitespace-pre-line">
+                          {feedback.message}
+                        </AlertDescription>
+                      </Alert>
+                  )}
+
+                </div>
+
+                {/* Right column: P/L Analysis */}
                 <div className="space-y-4">
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">Sample P/L Analysis</h4>
+                    <h4 className="font-medium mb-2">Profit/Loss Analysis</h4>
                     {stockPrice && strikePrice && premium ? (
                         <>
                           <div className="grid grid-cols-2 gap-4 mb-4">
@@ -193,91 +238,25 @@ const App = () => {
                           </div>
                         </>
                     ) : (
-                        <p className="text-gray-500">Enter stock details to see analysis</p>
+                        <p className="text-gray-500">Select a stock symbol and date to see analysis</p>
                     )}
                   </div>
-                </div>
-
-                {/* Right column: Inputs and Question */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="symbol">Stock Symbol</Label>
-                    <Input
-                        id="symbol"
-                        placeholder="e.g., AAPL"
-                        value={symbol}
-                        onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                        className="bg-blue-50"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Select Date</Label>
-                    <Input
-                        id="date"
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="bg-blue-50"
-                        max={new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
-
-                  <Button
-                      onClick={generateQuestion}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                      disabled={loading}
-                  >
-                    {loading ? (
-                        <span className="flex items-center">
-                      <Loader className="animate-spin mr-2" />
-                      Loading...
-                    </span>
-                    ) : (
-                        'Generate Question'
-                    )}
-                  </Button>
-
-                  {feedback.show && (
-                      <Alert className={feedback.correct ? "bg-green-50" : "bg-red-50"}>
-                        <AlertCircle className={feedback.correct ? "text-green-600" : "text-red-600"} />
-                        <AlertTitle className={feedback.correct ? "text-green-800" : "text-red-800"}>
-                          {feedback.correct ? "Question Generated" : "Error"}
-                        </AlertTitle>
-                        <AlertDescription className="whitespace-pre-line">
-                          {feedback.message}
-                        </AlertDescription>
-                      </Alert>
-                  )}
-
-                  {feedback.show && feedback.correct && (
-                      <div className="space-y-2">
-                        <Label htmlFor="answer">Your Answer ($)</Label>
-                        <Input
-                            id="answer"
-                            type="number"
-                            step="0.01"
-                            placeholder="Enter your answer"
-                            value={userAnswer}
-                            onChange={(e) => setUserAnswer(e.target.value)}
-                            className="bg-blue-50"
-                        />
-                        <Button
-                            onClick={checkAnswer}
-                            className="w-full bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          Check Answer
-                        </Button>
-                      </div>
-                  )}
                 </div>
               </div>
             </div>
-          </CardContent>
 
-          <CardFooter className="bg-blue-50 text-sm text-blue-800">
-            Tip: Break-even point = Strike Price + Premium
-          </CardFooter>
+            {/* Practice Questions Section */}
+            {stockPrice && strikePrice && premium && (
+                <div className="border-t pt-8">
+                  <ConceptQuiz
+                      stockPrice={stockPrice}
+                      strikePrice={strikePrice}
+                      premium={premium}
+                      symbol={symbol}
+                  />
+                </div>
+            )}
+          </CardContent>
         </Card>
       </div>
   );
