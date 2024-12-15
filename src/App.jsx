@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
@@ -42,24 +42,55 @@ const App = () => {
   const [premium, setPremium] = useState('');
   const [feedback, setFeedback] = useState({ show: false, correct: false, message: '' });
 
+  const [expirationDate, setExpirationDate] = useState('');
+  const [futurePrice, setFuturePrice] = useState('');
+
+
+  const addBusinessDays = (date, days) => {
+    let currentDate = new Date(date);
+    let addedDays = 0;
+    while (addedDays < days) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+        addedDays++;
+      }
+    }
+    return currentDate;
+  };
+
   const fetchStockData = async () => {
     setLoading(true);
     try {
-      console.log(`Fetching data for ${symbol} on ${selectedDate}`);
-      const response = await fetch(
+      Math.floor(new Date(selectedDate).getTime() / 1000);
+      const expirationDate = addBusinessDays(selectedDate, 10);
+      const expirationTimestamp = Math.floor(expirationDate.getTime() / 1000);
+
+      // Fetch current price
+      const currentResponse = await fetch(
           `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`
       );
 
-      const data = await response.json();
-      console.log('API Response:', data);
+      const currentData = await currentResponse.json();
 
-      if (data.c) {  // Current price exists
-        const currentPrice = data.c;
+      // Fetch historical data for expiration date
+      const historicalResponse = await fetch(
+          `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${expirationTimestamp}&to=${expirationTimestamp}&token=${FINNHUB_API_KEY}`
+      );
+
+      const historicalData = await historicalResponse.json();
+
+      if (currentData.c) {
+        const currentPrice = currentData.c;
         setStockPrice(currentPrice.toFixed(2));
-        // Set a reasonable strike price slightly above current price
         setStrikePrice((currentPrice * 1.05).toFixed(2));
-        // Set a sample premium (this would normally come from options data)
         setPremium((currentPrice * 0.03).toFixed(2));
+
+        // Store expiration date and future price if available
+        setExpirationDate(expirationDate.toISOString().split('T')[0]);
+        if (historicalData.c && historicalData.c[0]) {
+          setFuturePrice(historicalData.c[0].toFixed(2));
+        }
+
         return true;
       } else {
         setFeedback({
@@ -70,6 +101,7 @@ const App = () => {
         return false;
       }
     } catch (error) {
+      console.error('Error fetching data:', error);
       setFeedback({
         show: true,
         correct: false,
@@ -165,7 +197,7 @@ const App = () => {
                         <h4 className="font-medium text-blue-900">Option Details:</h4>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                           <div>
-                            <span className="text-sm text-gray-600">Stock Price:</span>
+                            <span className="text-sm text-gray-600">Current Stock Price:</span>
                             <p className="font-medium">${stockPrice}</p>
                           </div>
                           <div>
@@ -180,9 +212,13 @@ const App = () => {
                             <span className="text-sm text-gray-600">Total Cost:</span>
                             <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
                           </div>
-                          <div className="col-span-2">
-                            <span className="text-sm text-gray-600">Expiration Date:</span>
+                          <div>
+                            <span className="text-sm text-gray-600">Trade Date:</span>
                             <p className="font-medium">{selectedDate}</p>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-600">Expiration Date:</span>
+                            <p className="font-medium">{expirationDate}</p>
                           </div>
                         </div>
                       </div>
@@ -190,7 +226,7 @@ const App = () => {
 
                   {feedback.show && !feedback.correct && (
                       <Alert className="bg-red-50">
-                        <AlertCircle className="text-red-600" />
+                        <AlertCircle className="text-red-600"/>
                         <AlertTitle className="text-red-800">Error</AlertTitle>
                         <AlertDescription className="whitespace-pre-line">
                           {feedback.message}
@@ -253,6 +289,8 @@ const App = () => {
                       strikePrice={strikePrice}
                       premium={premium}
                       symbol={symbol}
+                      expirationDate={expirationDate}
+                      futurePrice={futurePrice}
                   />
                 </div>
             )}
