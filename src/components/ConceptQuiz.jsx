@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from './ui/button';
 import { generateDynamicQuestions } from '../utils/questions';
 
@@ -8,10 +8,12 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol }) => {
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
 
-    // Only generate questions if we have all the required data
-    const questions = stockPrice && strikePrice && premium && symbol
-        ? generateDynamicQuestions(stockPrice, strikePrice, premium, symbol)
-        : [];
+    // Generate questions only when props change
+    const questions = useMemo(() => {
+        return stockPrice && strikePrice && premium && symbol
+            ? generateDynamicQuestions(stockPrice, strikePrice, premium, symbol)
+            : [];
+    }, [stockPrice, strikePrice, premium, symbol]);
 
     const handleAnswerSelect = (answerIndex) => {
         setSelectedAnswer(answerIndex);
