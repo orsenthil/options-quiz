@@ -1,8 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { saveScore } from '../services/scoreService';
 import { Button } from './ui/button';
 import { generateDynamicQuestions } from '../utils/questions';
 
 const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate }) => {
+    const { user } = useAuth();
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [showExplanation, setShowExplanation] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -84,12 +87,34 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
         }
     };
 
+    const handleQuizComplete = async () => {
+        if (user) {
+            try {
+                await saveScore(
+                    user.uid,
+                    score,
+                    questions.length,
+                    symbol,
+                    selectedDate
+                );
+            } catch (error) {
+                console.error('Error saving score:', error);
+            }
+        }
+    };
+
     const handleRestartQuiz = () => {
         setCurrentQuestion(0);
         setSelectedAnswer(null);
         setShowExplanation(false);
         setScore(0);
     };
+
+    useEffect(() => {
+        if (currentQuestion === questions.length - 1 && showExplanation) {
+            handleQuizComplete();
+        }
+    }, [currentQuestion, showExplanation, questions.length]);
 
     if (questions.length === 0) {
         console.log('Rendering empty state - no questions available');

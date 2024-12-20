@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { AuthProvider } from './contexts/AuthContext';
+import Login from './components/Login';
+import ScoreHistory from './components/ScoreHistory';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -157,17 +160,22 @@ const App = () => {
   };
 
   return (
+      <AuthProvider>
       <div className="min-h-screen bg-blue-50 p-8">
         <Card className="max-w-4xl mx-auto bg-white mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-blue-900">
-              Long Call Options Trading Guide
-            </CardTitle>
-            <CardDescription>
-              Learn long call options trading concepts with interactive examples
-            </CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="text-2xl font-bold text-blue-900">
+                  Long Call Options Trading Guide
+                </CardTitle>
+                <CardDescription>
+                  Learn long call options trading concepts with interactive examples
+                </CardDescription>
+              </div>
+              <Login />
+            </div>
           </CardHeader>
-
           <CardContent className="space-y-8">
             {/* Stock Selection and P/L Analysis */}
             <div>
@@ -321,6 +329,7 @@ const App = () => {
           </CardContent>
         </Card>
       </div>
+      </AuthProvider>
   );
 };
 
