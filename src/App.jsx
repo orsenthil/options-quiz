@@ -61,44 +61,64 @@ const App = () => {
   const fetchStockData = async () => {
     setLoading(true);
     try {
-      Math.floor(new Date(selectedDate).getTime() / 1000);
-      const expirationDate = addBusinessDays(selectedDate, 10);
-      const expirationTimestamp = Math.floor(expirationDate.getTime() / 1000);
+      console.log('Starting fetchStockData with:', { symbol, selectedDate });
 
-      // Fetch current price
-      const currentResponse = await fetch(
+      // Calculate expiration date (10 business days from selected date)
+      const expirationDate = addBusinessDays(selectedDate, 10);
+
+      // Fetch current price using quote endpoint
+      const response = await fetch(
           `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`
       );
+      const data = await response.json();
+      console.log('Quote data:', data);
 
-      const currentData = await currentResponse.json();
+      if (data.c) {
+        // Get current price
+        const startingPrice = data.c;
 
-      // Fetch historical data for expiration date
-      const historicalResponse = await fetch(
-          `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${expirationTimestamp}&to=${expirationTimestamp}&token=${FINNHUB_API_KEY}`
-      );
+        // Calculate random price movement between -5% to +15%
+        const minChange = -0.05;
+        const maxChange = 0.15;
+        const randomChange = Math.random() * (maxChange - minChange) + minChange;
+        const futurePrice = startingPrice * (1 + randomChange);
 
+        console.log('Setting data with values:', {
+          startingPrice,
+          randomChange: `${(randomChange * 100).toFixed(2)}%`,
+          futurePrice
+        });
 
+        // Set initial price and calculated values
+        setStockPrice(startingPrice.toFixed(2));
+        setStrikePrice((startingPrice * 1.05).toFixed(2));
+        setPremium((startingPrice * 0.03).toFixed(2));
 
-      const historicalData = await historicalResponse.json();
+        // Set future (expiration) price with random movement
+        setFuturePrice(futurePrice.toFixed(2));
 
-      if (currentData.c) {
-        const currentPrice = currentData.c;
-        setStockPrice(currentPrice.toFixed(2));
-        setStrikePrice((currentPrice * 1.05).toFixed(2));
-        setPremium((currentPrice * 0.03).toFixed(2));
-
-        // Store expiration date and future price if available
+        // Set expiration date
         setExpirationDate(expirationDate.toISOString().split('T')[0]);
-        if (historicalData.c && historicalData.c[0]) {
-          setFuturePrice(historicalData.c[0].toFixed(2));
-        }
+
+        console.log('Data set successfully:', {
+          stockPrice: startingPrice.toFixed(2),
+          strikePrice: (startingPrice * 1.05).toFixed(2),
+          premium: (startingPrice * 0.03).toFixed(2),
+          futurePrice: futurePrice.toFixed(2),
+          expirationDate: expirationDate.toISOString().split('T')[0],
+          selectedDate
+        });
 
         return true;
       } else {
+        console.log('Missing required data:', {
+          hasCurrentPrice: Boolean(data.c)
+        });
+
         setFeedback({
           show: true,
           correct: false,
-          message: 'No data available for this date'
+          message: 'No data available for this symbol'
         });
         return false;
       }
@@ -284,7 +304,8 @@ const App = () => {
             </div>
 
             {/* Practice Questions Section */}
-            {stockPrice && strikePrice && premium && (
+            {stockPrice && strikePrice && premium && futurePrice && expirationDate && selectedDate && (
+
                 <div className="border-t pt-8">
                   <ConceptQuiz
                       stockPrice={stockPrice}

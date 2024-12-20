@@ -29,19 +29,19 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                     isCorrect: true
                 },
                 {
-                    text: `$${maxLoss.toFixed(2)}`,
+                    text: `$${(maxLoss).toFixed(2)}`,
                     isCorrect: false
                 },
                 {
-                    text: `$${(priceUpTen - currentPrice).toFixed(2)}`,
+                    text: `$${((priceUpTen - strike) * 100).toFixed(2)}`,
                     isCorrect: false
                 },
                 {
-                    text: `$${((priceUpTen - breakEven) * 100).toFixed(2)}`,
+                    text: `$${((priceUpTen - currentPrice) * 100).toFixed(2)}`,
                     isCorrect: false
                 }
             ],
-            explanation: `At $${priceUpTen.toFixed(2)}, you're above the strike price of $${strike}. Your profit would be: (Current Price - Strike Price) × 100 shares - Premium Paid`
+            explanation: `At $${priceUpTen.toFixed(2)}, the profit is: (Stock Price - Strike Price) × 100 shares - Premium Paid = ($${priceUpTen.toFixed(2)} - $${strike.toFixed(2)}) × 100 - $${maxLoss.toFixed(2)} = $${((priceUpTen - strike) * 100 - maxLoss).toFixed(2)}`
         },
         {
             id: 2,
@@ -56,19 +56,19 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                     isCorrect: true
                 },
                 {
-                    text: `$${(strike - priceDownTen).toFixed(2)}`,
+                    text: `$${(currentPrice * 100).toFixed(2)}`,
                     isCorrect: false
                 },
                 {
-                    text: 'Unlimited loss',
+                    text: `$${((strike - priceDownTen) * 100).toFixed(2)}`,
                     isCorrect: false
                 }
             ],
-            explanation: `Your maximum loss is always limited to the premium paid ($${maxLoss.toFixed(2)}), regardless of how low the stock price goes`
+            explanation: `With a long call option, your maximum loss is limited to the premium paid ($${maxLoss.toFixed(2)}), no matter how low the stock price goes.`
         },
         {
             id: 3,
-            question: `For your ${symbol} call option, which price represents the break-even point?`,
+            question: `For your ${symbol} call option, what is the break-even stock price at expiration?`,
             options: [
                 {
                     text: `$${currentPrice.toFixed(2)} (Current Price)`,
@@ -87,116 +87,90 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                     isCorrect: false
                 }
             ],
-            explanation: `Break-even = Strike Price ($${strike}) + Premium ($${prem}) = $${breakEven.toFixed(2)}`
+            explanation: `Break-even price at expiration = Strike Price + Premium per share = $${strike.toFixed(2)} + $${prem.toFixed(2)} = $${breakEven.toFixed(2)}`
         },
         {
             id: 4,
-            question: `With ${symbol} at $${currentPrice.toFixed(2)}, the strike price at $${strike.toFixed(2)}, is this call option currently in-the-money (ITM)?`,
+            question: `With ${symbol} currently at $${currentPrice.toFixed(2)}, what happens if the stock expires exactly at the strike price of $${strike.toFixed(2)}?`,
             options: [
                 {
-                    text: `Yes, because the current price is above the break-even ($${breakEven.toFixed(2)})`,
+                    text: `You break even`,
                     isCorrect: false
                 },
                 {
-                    text: `Yes, because the current price ($${currentPrice.toFixed(2)}) is above the strike price ($${strike.toFixed(2)})`,
-                    isCorrect: currentPrice > strike
+                    text: `You lose $${maxLoss.toFixed(2)} (the premium paid)`,
+                    isCorrect: true
                 },
                 {
-                    text: `No, because the current price ($${currentPrice.toFixed(2)}) is below the strike price ($${strike.toFixed(2)})`,
-                    isCorrect: currentPrice <= strike
+                    text: `You lose $${(maxLoss/2).toFixed(2)}`,
+                    isCorrect: false
                 },
                 {
-                    text: `No, because we haven't reached expiration yet`,
+                    text: `You make a small profit`,
                     isCorrect: false
                 }
             ],
-            explanation: currentPrice > strike
-                ? `The option is ITM because the current price ($${currentPrice.toFixed(2)}) is above the strike price ($${strike.toFixed(2)})`
-                : `The option is OTM because the current price ($${currentPrice.toFixed(2)}) is below the strike price ($${strike.toFixed(2)})`
+            explanation: `At expiration, if the stock price equals the strike price, the option expires at-the-money and worthless. You lose the entire premium paid ($${maxLoss.toFixed(2)}).`
         },
         {
             id: 5,
-            question: `If ${symbol} stays at exactly $${strike.toFixed(2)} (the strike price) at expiration, what is your loss?`,
-            options: [
-                {
-                    text: 'No loss (break-even)',
-                    isCorrect: false
-                },
-                {
-                    text: `$${(maxLoss/2).toFixed(2)}`,
-                    isCorrect: false
-                },
-                {
-                    text: `$${maxLoss.toFixed(2)}`,
-                    isCorrect: true
-                },
-                {
-                    text: `$${(strike * 0.1).toFixed(2)}`,
-                    isCorrect: false
-                }
-            ],
-            explanation: `At exactly the strike price, the option expires worthless. You lose the entire premium paid ($${maxLoss.toFixed(2)})`
-        },
-        // Additional backtesting questions - Add to generateQuestionBase
-        {
-            id: 6,
             question: `On ${expirationDate}, ${symbol} closed at $${futurePrice}. What was your actual profit/loss on this trade?`,
             options: [
                 {
-                    text: `$${((parseFloat(futurePrice) - strike) * 100 - maxLoss).toFixed(2)}`,
+                    text: `$${((future > strike ? (future - strike) * 100 : 0) - maxLoss).toFixed(2)}`,
                     isCorrect: true
                 },
                 {
-                    text: `$${((parseFloat(futurePrice) - currentPrice) * 100).toFixed(2)}`,
+                    text: `$${((future - currentPrice) * 100).toFixed(2)}`,
+                    isCorrect: false
+                },
+                {
+                    text: `$${((future - strike) * 100).toFixed(2)}`,
                     isCorrect: false
                 },
                 {
                     text: `$${maxLoss.toFixed(2)}`,
                     isCorrect: false
+                }
+            ],
+            explanation: future > strike
+                ? `The stock closed above the strike price, so your profit is: (Final Price - Strike Price) × 100 - Premium = ($${future.toFixed(2)} - $${strike.toFixed(2)}) × 100 - $${maxLoss.toFixed(2)} = $${((future - strike) * 100 - maxLoss).toFixed(2)}`
+                : `The stock closed below the strike price, so the option expired worthless. Your loss is the premium paid: $${maxLoss.toFixed(2)}`
+        },
+        {
+            id: 6,
+            question: `Between ${selectedDate} and ${expirationDate}, ${symbol} moved from $${currentPrice} to $${futurePrice}. What was your actual return on investment (ROI)?`,
+            options: [
+                {
+                    text: `${(((future > strike ? (future - strike) * 100 : 0) - maxLoss) / maxLoss * 100).toFixed(2)}%`,
+                    isCorrect: true
                 },
                 {
-                    text: `$${((parseFloat(futurePrice) - breakEven) * 100).toFixed(2)}`,
+                    text: `${((future - currentPrice) / currentPrice * 100).toFixed(2)}%`,
+                    isCorrect: false
+                },
+                {
+                    text: `${((future - strike) / strike * 100).toFixed(2)}%`,
+                    isCorrect: false
+                },
+                {
+                    text: `${(future > strike ? ((future - strike) / strike * 100) : -100).toFixed(2)}%`,
                     isCorrect: false
                 }
             ],
-            explanation: `The stock closed at $${futurePrice}. Your profit/loss was: (Final Price - Strike Price) × 100 shares - Premium Paid = $${((parseFloat(futurePrice) - strike) * 100 - maxLoss).toFixed(2)}`
+            explanation: `ROI = (Profit or Loss / Initial Investment) × 100. Your initial investment was the premium ($${maxLoss.toFixed(2)}), resulting in an ROI of ${(((future > strike ? (future - strike) * 100 : 0) - maxLoss) / maxLoss * 100).toFixed(2)}%`
         },
         {
             id: 7,
-            question: `Between ${selectedDate} and ${expirationDate}, ${symbol} moved from $${currentPrice} to $${futurePrice}. Was exercising this option profitable?`,
+            question: `Comparing strategies for ${symbol}, which would have been more profitable: the call option or buying 100 shares directly?`,
             options: [
                 {
-                    text: `Yes, the profit was $${((parseFloat(futurePrice) - strike) * 100 - maxLoss).toFixed(2)}`,
-                    isCorrect: parseFloat(futurePrice) > breakEven
+                    text: `Buying shares with profit of $${((future - currentPrice) * 100).toFixed(2)}`,
+                    isCorrect: (future - currentPrice) * 100 > (future > strike ? (future - strike) * 100 - maxLoss : -maxLoss)
                 },
                 {
-                    text: "No, letting the option expire was better",
-                    isCorrect: parseFloat(futurePrice) <= breakEven
-                },
-                {
-                    text: `Yes, but only if sold before expiration`,
-                    isCorrect: false
-                },
-                {
-                    text: `No, a loss of $${maxLoss.toFixed(2)} was inevitable`,
-                    isCorrect: false
-                }
-            ],
-            explanation: parseFloat(futurePrice) > breakEven
-                ? `The stock price ($${futurePrice}) was above your breakeven ($${breakEven}), making exercise profitable.`
-                : `The stock price ($${futurePrice}) was below your breakeven ($${breakEven}), resulting in a loss if exercised.`
-        },
-        {
-            id: 8,
-            question: `Given that ${symbol} moved from $${currentPrice} to $${futurePrice}, would buying 100 shares directly have been more profitable than this call option?`,
-            options: [
-                {
-                    text: `Yes, stock profit would be $${((parseFloat(futurePrice) - currentPrice) * 100).toFixed(2)}`,
-                    isCorrect: (parseFloat(futurePrice) - currentPrice) * 100 > (parseFloat(futurePrice) - strike) * 100 - maxLoss
-                },
-                {
-                    text: `No, option profit of $${((parseFloat(futurePrice) - strike) * 100 - maxLoss).toFixed(2)} was better`,
-                    isCorrect: (parseFloat(futurePrice) - currentPrice) * 100 <= (parseFloat(futurePrice) - strike) * 100 - maxLoss
+                    text: `Call option with ${future > strike ? 'profit' : 'loss'} of $${((future > strike ? (future - strike) * 100 - maxLoss : -maxLoss)).toFixed(2)}`,
+                    isCorrect: (future - currentPrice) * 100 <= (future > strike ? (future - strike) * 100 - maxLoss : -maxLoss)
                 },
                 {
                     text: "Both strategies would have the same profit",
@@ -207,62 +181,52 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                     isCorrect: false
                 }
             ],
-            explanation: `Stock profit: $${((parseFloat(futurePrice) - currentPrice) * 100).toFixed(2)}
-    Option profit: $${((parseFloat(futurePrice) - strike) * 100 - maxLoss).toFixed(2)}`
+            explanation: `Stock profit/loss: ($${future.toFixed(2)} - $${currentPrice.toFixed(2)}) × 100 = $${((future - currentPrice) * 100).toFixed(2)}
+Option profit/loss: ${future > strike ? `($${future.toFixed(2)} - $${strike.toFixed(2)}) × 100 - $${maxLoss.toFixed(2)}` : `-$${maxLoss.toFixed(2)}`} = $${((future > strike ? (future - strike) * 100 - maxLoss : -maxLoss)).toFixed(2)}`
         },
         {
-            id: 9,
-            question: `Based on ${symbol}'s price movement from $${currentPrice} to $${futurePrice}, what was the return on investment (ROI) for this option trade?`,
+            id: 8,
+            question: `Based on ${symbol}'s movement to $${futurePrice}, what was the key lesson from this trade?`,
             options: [
                 {
-                    text: `${(((parseFloat(futurePrice) - strike) * 100 - maxLoss) / maxLoss * 100).toFixed(2)}%`,
-                    isCorrect: true
+                    text: `The strike selection of $${strike} was optimal as the option ${future > breakEven ? 'was profitable' : 'minimized losses'}`,
+                    isCorrect: future > breakEven
                 },
                 {
-                    text: `${((parseFloat(futurePrice) - currentPrice) / currentPrice * 100).toFixed(2)}%`,
-                    isCorrect: false
+                    text: `A lower strike price would have been better given the final price of $${futurePrice}`,
+                    isCorrect: future > currentPrice && future <= breakEven
                 },
                 {
-                    text: `${((parseFloat(futurePrice) - strike) / strike * 100).toFixed(2)}%`,
-                    isCorrect: false
+                    text: `Stock ownership would have outperformed the option`,
+                    isCorrect: future <= currentPrice
                 },
                 {
-                    text: "0%",
+                    text: `The outcome was purely random and no lesson can be drawn`,
                     isCorrect: false
                 }
             ],
-            explanation: `ROI = (Profit or Loss / Initial Investment) × 100. Your initial investment was the premium ($${maxLoss.toFixed(2)}).`
-        },
-        {
-            id: 10,
-            question: `Given that ${symbol} reached $${futurePrice} by ${expirationDate}, what lesson can be learned about the trade entry at $${currentPrice}?`,
-            options: [
-                {
-                    text: `The strike price of $${strike} was well chosen as the stock moved above it`,
-                    isCorrect: parseFloat(futurePrice) > strike && parseFloat(futurePrice) > breakEven
-                },
-                {
-                    text: `A lower strike price would have been better given the final price`,
-                    isCorrect: parseFloat(futurePrice) > currentPrice && parseFloat(futurePrice) <= breakEven
-                },
-                {
-                    text: `Buying shares would have been better than options`,
-                    isCorrect: parseFloat(futurePrice) <= currentPrice
-                },
-                {
-                    text: `The entry price was irrelevant to the outcome`,
-                    isCorrect: false
-                }
-            ],
-            explanation: parseFloat(futurePrice) > breakEven
-                ? `The trade was profitable as the stock moved above your breakeven price of $${breakEven}`
-                : `The trade resulted in a loss as the stock stayed below your breakeven price of $${breakEven}`
+            explanation: future > breakEven
+                ? `The trade was profitable as the stock moved above your break-even price of $${breakEven.toFixed(2)}, validating the strike selection.`
+                : future > currentPrice
+                    ? `While the stock rose, it didn't exceed the break-even price of $${breakEven.toFixed(2)}, suggesting a lower strike might have worked better.`
+                    : `The stock price fell, making stock ownership or no position the better choice.`
         }
     ];
 };
 
+
 // This is the exported function that will be called once when generating questions
 export const generateDynamicQuestions = (stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate) => {
+    console.log('Generating questions with:', {
+        stockPrice,
+        strikePrice,
+        premium,
+        symbol,
+        futurePrice,
+        expirationDate,
+        selectedDate
+    });
+
     const questions = generateQuestionBase(stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate);
 
     // Shuffle and prepare the questions once

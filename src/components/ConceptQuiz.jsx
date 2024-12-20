@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from './ui/button';
 import { generateDynamicQuestions } from '../utils/questions';
 
@@ -8,12 +8,64 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
 
-    // Generate questions only when props change, now including futurePrice
-    const questions = useMemo(() => {
-        return stockPrice && strikePrice && premium && symbol && futurePrice
-            ? generateDynamicQuestions(stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate)
-            : [];
+    // Log props whenever they change
+    useEffect(() => {
+        console.log('ConceptQuiz received props:', {
+            stockPrice,
+            strikePrice,
+            premium,
+            symbol,
+            futurePrice,
+            expirationDate,
+            selectedDate
+        });
     }, [stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate]);
+
+    // Generate questions only when props change
+    const questions = useMemo(() => {
+        console.log('Generating questions with props:', {
+            stockPrice,
+            strikePrice,
+            premium,
+            symbol,
+            futurePrice,
+            expirationDate,
+            selectedDate
+        });
+
+        // Check if all required props are available
+        const allPropsAvailable = Boolean(
+            stockPrice &&
+            strikePrice &&
+            premium &&
+            symbol &&
+            futurePrice &&
+            expirationDate &&
+            selectedDate
+        );
+
+        console.log('All props available:', allPropsAvailable);
+
+        if (allPropsAvailable) {
+            const generatedQuestions = generateDynamicQuestions(
+                stockPrice,
+                strikePrice,
+                premium,
+                symbol,
+                futurePrice,
+                expirationDate,
+                selectedDate
+            );
+            console.log('Generated questions:', generatedQuestions);
+            return generatedQuestions;
+        }
+
+        return [];
+    }, [stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate]);
+
+    useEffect(() => {
+        console.log('Questions array updated:', questions);
+    }, [questions]);
 
     const handleAnswerSelect = (answerIndex) => {
         setSelectedAnswer(answerIndex);
@@ -40,6 +92,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
     };
 
     if (questions.length === 0) {
+        console.log('Rendering empty state - no questions available');
         return (
             <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <p>Generate a question to see practical scenarios based on real market data.</p>
@@ -47,6 +100,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
         );
     }
 
+    console.log('Rendering question:', currentQuestion);
     const question = questions[currentQuestion];
 
     return (
