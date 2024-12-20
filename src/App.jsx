@@ -77,6 +77,8 @@ const App = () => {
           `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${expirationTimestamp}&to=${expirationTimestamp}&token=${FINNHUB_API_KEY}`
       );
 
+
+
       const historicalData = await historicalResponse.json();
 
       if (currentData.c) {
@@ -291,6 +293,7 @@ const App = () => {
                       symbol={symbol}
                       expirationDate={expirationDate}
                       futurePrice={futurePrice}
+                      selectedDate={selectedDate}
                   />
                 </div>
             )}

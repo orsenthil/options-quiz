@@ -2,18 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { Button } from './ui/button';
 import { generateDynamicQuestions } from '../utils/questions';
 
-const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol }) => {
+const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate }) => {
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [showExplanation, setShowExplanation] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
 
-    // Generate questions only when props change
+    // Generate questions only when props change, now including futurePrice
     const questions = useMemo(() => {
-        return stockPrice && strikePrice && premium && symbol
-            ? generateDynamicQuestions(stockPrice, strikePrice, premium, symbol)
+        return stockPrice && strikePrice && premium && symbol && futurePrice
+            ? generateDynamicQuestions(stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate)
             : [];
-    }, [stockPrice, strikePrice, premium, symbol]);
+    }, [stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate]);
 
     const handleAnswerSelect = (answerIndex) => {
         setSelectedAnswer(answerIndex);
