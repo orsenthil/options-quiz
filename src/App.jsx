@@ -309,6 +309,7 @@ const App = () => {
                               strikePrice={parseFloat(strikePrice)}
                               premium={parseFloat(premium)}
                               currentPrice={parseFloat(stockPrice)}
+                              strategy={selectedStrategy}
                           />
 
                           <div className="mt-4">
