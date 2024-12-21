@@ -30,6 +30,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
 
     // Generate questions only when props change
     const questions = useMemo(() => {
+
         console.log('Generating questions with props:', {
             stockPrice,
             strikePrice,
@@ -54,8 +55,11 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
         console.log('All props available:', allPropsAvailable);
 
         if (allPropsAvailable) {
+            console.log("All props available: ", allPropsAvailable);
+
             switch (strategy) {
                 case STRATEGY_TYPES.LONG_CALL:
+                    console.log("Selecting generate Long Call");
                     return generateLongCallQuestions(
                         stockPrice,
                         strikePrice,
@@ -66,6 +70,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                         selectedDate
                     );
                 case STRATEGY_TYPES.COVERED_CALL:
+                    console.log("Selecting Covered Call");
                     return generateCoveredCallQuestions(
                         stockPrice,
                         strikePrice,
