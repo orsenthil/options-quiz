@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
+import StrategySelector from './components/StrategySelector';
+import { STRATEGY_TYPES } from './strategies/types';
 import Login from './components/Login';
 import ScoreHistory from './components/ScoreHistory';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
@@ -37,6 +39,7 @@ const calculatePL = (stockPrice, strikePrice, premium) => {
 };
 
 const App = () => {
+  const [selectedStrategy, setSelectedStrategy] = useState(STRATEGY_TYPES.LONG_CALL);
   const [symbol, setSymbol] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [loading, setLoading] = useState(false);
@@ -60,6 +63,19 @@ const App = () => {
     }
     return currentDate;
   };
+
+  // Modify the strike price calculation based on strategy
+  const calculateStrikePrice = (currentPrice, strategy) => {
+    switch (strategy) {
+      case STRATEGY_TYPES.LONG_CALL:
+        return currentPrice * 1.05; // 5% OTM
+      case STRATEGY_TYPES.COVERED_CALL:
+        return currentPrice * 1.02; // 2% OTM
+      default:
+        return currentPrice;
+    }
+  };
+
 
   const fetchStockData = async () => {
     setLoading(true);
@@ -94,8 +110,10 @@ const App = () => {
 
         // Set initial price and calculated values
         setStockPrice(startingPrice.toFixed(2));
-        setStrikePrice((startingPrice * 1.05).toFixed(2));
-        setPremium((startingPrice * 0.03).toFixed(2));
+        const strike = calculateStrikePrice(startingPrice, selectedStrategy);
+        setStrikePrice(strike.toFixed(2));
+        const premiumMultiplier = selectedStrategy === STRATEGY_TYPES.COVERED_CALL ? 0.02 : 0.03;
+        setPremium((startingPrice * premiumMultiplier).toFixed(2));
 
         // Set future (expiration) price with random movement
         setFuturePrice(futurePrice.toFixed(2));
@@ -167,16 +185,20 @@ const App = () => {
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle className="text-2xl font-bold text-blue-900">
-                  Long Call Options Trading Guide
+                  Options Trading Guide
                 </CardTitle>
                 <CardDescription>
-                  Learn long call options trading concepts with interactive examples
+                  Learn options trading concepts with interactive examples
                 </CardDescription>
               </div>
               <Login />
             </div>
           </CardHeader>
           <CardContent className="space-y-8">
+            <StrategySelector
+                selectedStrategy={selectedStrategy}
+                onStrategyChange={setSelectedStrategy}
+            />
             {/* Stock Selection and P/L Analysis */}
             <div>
               <h3 className="text-xl font-semibold mb-4">Options Analysis Tool</h3>
@@ -323,6 +345,7 @@ const App = () => {
                       expirationDate={expirationDate}
                       futurePrice={futurePrice}
                       selectedDate={selectedDate}
+                      strategy={selectedStrategy}
                   />
                 </div>
             )}

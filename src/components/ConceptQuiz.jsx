@@ -3,8 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { saveScore } from '../services/scoreService';
 import { Button } from './ui/button';
 import { generateDynamicQuestions } from '../utils/questions';
+import { STRATEGY_TYPES } from '../strategies/types';
+import { generateLongCallQuestions } from '../strategies/longCall/questions';
+import { generateCoveredCallQuestions } from '../strategies/coveredCall/questions';
 
-const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate }) => {
+
+const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate, strategy }) => {
     const { user } = useAuth();
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [showExplanation, setShowExplanation] = useState(false);
@@ -50,21 +54,34 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
         console.log('All props available:', allPropsAvailable);
 
         if (allPropsAvailable) {
-            const generatedQuestions = generateDynamicQuestions(
-                stockPrice,
-                strikePrice,
-                premium,
-                symbol,
-                futurePrice,
-                expirationDate,
-                selectedDate
-            );
-            console.log('Generated questions:', generatedQuestions);
-            return generatedQuestions;
+            switch (strategy) {
+                case STRATEGY_TYPES.LONG_CALL:
+                    return generateLongCallQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                case STRATEGY_TYPES.COVERED_CALL:
+                    return generateCoveredCallQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                default:
+                    return [];
+            }
         }
 
         return [];
-    }, [stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate]);
+    }, [stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate, strategy]);
 
     useEffect(() => {
         console.log('Questions array updated:', questions);
