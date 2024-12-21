@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { saveScore } from '../services/scoreService';
 import { Button } from './ui/button';
-import { generateDynamicQuestions } from '../utils/questions';
 import { STRATEGY_TYPES } from '../strategies/types';
 import { generateLongCallQuestions } from '../strategies/longCall/questions';
 import { generateCoveredCallQuestions } from '../strategies/coveredCall/questions';
