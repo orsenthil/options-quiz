@@ -14,7 +14,7 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
     return [
         {
             id: 1,
-            question: `If ${symbol} rises to $${priceUpTen.toFixed(2)} (10% increase) before expiration, what would be your profit?`,
+            question: `Protective Put: If ${symbol} rises to $${priceUpTen.toFixed(2)} (10% increase) before expiration, what would be your profit?`,
             options: [
                 {
                     text: `$${((priceUpTen - strike) * 100 - maxLoss).toFixed(2)}`,

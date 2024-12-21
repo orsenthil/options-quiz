@@ -5,6 +5,10 @@ import { Button } from './ui/button';
 import { STRATEGY_TYPES } from '../strategies/types';
 import { generateLongCallQuestions } from '../strategies/longCall/questions';
 import { generateCoveredCallQuestions } from '../strategies/coveredCall/questions';
+import {generateOptionsTheoryQuestions} from "@/strategies/optionsTheory/questions.js";
+import {generateCollarStrategyQuestions} from "@/strategies/collarStrategy/questions.js";
+import {generateCashSecuredPutQuestions} from "@/strategies/cashSecuredPut/questions.js";
+import {generateProtectivePutQuestions} from "@/strategies/protectivePut/questions.js";
 
 
 const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate, strategy }) => {
@@ -71,6 +75,50 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                 case STRATEGY_TYPES.COVERED_CALL:
                     console.log("Selecting Covered Call");
                     return generateCoveredCallQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                case STRATEGY_TYPES.OPTIONS_THEORY:
+                    console.log("Selecting Options Theory");
+                    return generateOptionsTheoryQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                case STRATEGY_TYPES.COLLAR_STRATEGY:
+                    console.log("Selecting Collar Strategy");
+                    return generateCollarStrategyQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                case STRATEGY_TYPES.CASH_SECURED_PUT:
+                    console.log("Selecting Cash Secured Put");
+                    return generateCashSecuredPutQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                case STRATEGY_TYPES.PROTECTIVE_PUT:
+                    console.log("Selecting Protectivated Put");
+                    return generateProtectivePutQuestions(
                         stockPrice,
                         strikePrice,
                         premium,
