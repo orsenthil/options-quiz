@@ -41,7 +41,6 @@ const calculatePL = (stockPrice, strikePrice, premium) => {
 const App = () => {
   const [selectedStrategy, setSelectedStrategy] = useState(STRATEGY_TYPES.LONG_CALL);
   const [symbol, setSymbol] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [stockPrice, setStockPrice] = useState('');
   const [strikePrice, setStrikePrice] = useState('');
@@ -80,10 +79,10 @@ const App = () => {
   const fetchStockData = async () => {
     setLoading(true);
     try {
-      console.log('Starting fetchStockData with:', { symbol, selectedDate });
+      console.log('Starting fetchStockData with:', { symbol });
 
-      // Calculate expiration date (10 business days from selected date)
-      const expirationDate = addBusinessDays(selectedDate, 10);
+      // Calculate expiration date (10 business days from today )
+      const expirationDate = addBusinessDays(new Date(), 10);
 
       // Fetch current price using quote endpoint
       const response = await fetch(
@@ -127,7 +126,6 @@ const App = () => {
           premium: (startingPrice * 0.03).toFixed(2),
           futurePrice: futurePrice.toFixed(2),
           expirationDate: expirationDate.toISOString().split('T')[0],
-          selectedDate
         });
 
         return true;
@@ -157,7 +155,7 @@ const App = () => {
   };
 
   const generateQuestion = async () => {
-    if (!symbol || !selectedDate) {
+    if (!symbol) {
       setFeedback({
         show: true,
         correct: false,
@@ -216,18 +214,6 @@ const App = () => {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="date">Select Date</Label>
-                    <Input
-                        id="date"
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="bg-blue-50"
-                        max={new Date().toISOString().split('T')[0]}
-                    />
-                  </div>
-
                   <Button
                       onClick={generateQuestion}
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -266,7 +252,7 @@ const App = () => {
                           </div>
                           <div>
                             <span className="text-sm text-gray-600">Trade Date:</span>
-                            <p className="font-medium">{selectedDate}</p>
+                            <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
                           </div>
                           <div>
                             <span className="text-sm text-gray-600">Expiration Date:</span>
@@ -335,7 +321,7 @@ const App = () => {
             </div>
 
             {/* Practice Questions Section */}
-            {stockPrice && strikePrice && premium && futurePrice && expirationDate && selectedDate && (
+            {stockPrice && strikePrice && premium && futurePrice && expirationDate && (
 
                 <div className="border-t pt-8">
                   <ConceptQuiz
@@ -345,7 +331,7 @@ const App = () => {
                       symbol={symbol}
                       expirationDate={expirationDate}
                       futurePrice={futurePrice}
-                      selectedDate={selectedDate}
+                      selectedDate={new Date().toISOString().split('T')[0]}  // Today's date
                       strategy={selectedStrategy}
                   />
                 </div>
