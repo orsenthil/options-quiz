@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
+import { PaymentProvider } from './contexts/PaymentContext';
+import { useAuth } from './contexts/AuthContext';
+import { usePayment } from './contexts/PaymentContext';
+import AuthGuard from './components/AuthGuard';
 import StrategySelector from './components/StrategySelector';
 import { STRATEGY_TYPES } from './strategies/types';
 import Login from './components/Login';
 import ScoreHistory from './components/ScoreHistory';
+import PaymentGateway from './components/PaymentGateway';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -12,7 +17,6 @@ import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { AlertCircle, Loader } from "lucide-react";
 import ConceptQuiz from './components/ConceptQuiz';
 import ProfitLossChart from './components/ProfitLossChart';
-import {PaymentProvider} from "./contexts/PaymentContext";
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -39,8 +43,10 @@ const calculatePL = (stockPrice, strikePrice, premium) => {
   return pl.toFixed(2);
 };
 
-const App = () => {
-  const [selectedStrategy, setSelectedStrategy] = useState(STRATEGY_TYPES.LONG_CALL);
+const AppContent = () => {
+  const { user } = useAuth();
+  const { isPremium } = usePayment();
+  const [selectedStrategy, setSelectedStrategy] = useState(STRATEGY_TYPES.OPTIONS_THEORY);
   const [symbol, setSymbol] = useState('');
   const [loading, setLoading] = useState(false);
   const [stockPrice, setStockPrice] = useState('');
@@ -50,6 +56,23 @@ const App = () => {
 
   const [expirationDate, setExpirationDate] = useState('');
   const [futurePrice, setFuturePrice] = useState('');
+
+  const isPremiumStrategy = (strategy) => {
+    return ![STRATEGY_TYPES.OPTIONS_THEORY, STRATEGY_TYPES.COVERED_CALL].includes(strategy);
+  };
+
+  // Modify the strategy change handler
+  const handleStrategyChange = (strategy) => {
+    if (isPremiumStrategy(strategy) && !isPremium) {
+      return;
+    }
+    setSelectedStrategy(strategy);
+    // Reset other states as needed
+    setSymbol('');
+    setStockPrice('');
+    setStrikePrice('');
+    setPremium('');
+  };
 
 
   const addBusinessDays = (date, days) => {
@@ -177,8 +200,6 @@ const App = () => {
   };
 
   return (
-      <AuthProvider>
-        <PaymentProvider>
           <div className="min-h-screen bg-blue-50 p-8">
             <Card className="max-w-4xl mx-auto bg-white mb-8">
               <CardHeader>
@@ -322,6 +343,16 @@ const App = () => {
                   </div>
                 </div>
 
+                {/* Show payment gateway for non-premium users */}
+                {user && !isPremium && (
+                    <div className="border-t pt-8">
+                      <PaymentGateway />
+                    </div>
+                )}
+
+                {/* Score history for logged-in users */}
+                {user && <ScoreHistory />}
+
                 {/* Practice Questions Section */}
                 {stockPrice && strikePrice && premium && futurePrice && expirationDate && (
 
@@ -341,7 +372,15 @@ const App = () => {
               </CardContent>
             </Card>
           </div>
-            </PaymentProvider>
+  );
+};
+
+const App = () => {
+  return (
+      <AuthProvider>
+        <PaymentProvider>
+          <AppContent />
+        </PaymentProvider>
       </AuthProvider>
   );
 };

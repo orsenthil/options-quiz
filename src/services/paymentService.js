@@ -11,11 +11,40 @@ import {
 export const checkSubscriptionStatus = async (userId) => {
     try {
         const userDoc = await getDoc(doc(db, 'subscriptions', userId));
-        return {
-            isPremium: userDoc.exists() && userDoc.data().status === 'active'
-        };
+
+        if (!userDoc.exists()) {
+            return { isPremium: false };
+        }
+
+        const data = userDoc.data();
+
+        // Check if the user has an active subscription
+        const isActive = data.status === 'active';
+
+        // Store the subscription status in localStorage for persistence
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('optionsTrainingPremium', JSON.stringify({
+                isPremium: isActive,
+                userId,
+                lastChecked: new Date().toISOString()
+            }));
+        }
+
+        return { isPremium: isActive };
     } catch (error) {
         console.error('Error checking subscription:', error);
+
+        // Fallback to cached status if available
+        if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('optionsTrainingPremium');
+            if (cached) {
+                const { isPremium, userId: cachedUserId } = JSON.parse(cached);
+                if (userId === cachedUserId) {
+                    return { isPremium };
+                }
+            }
+        }
+
         throw error;
     }
 };
