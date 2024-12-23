@@ -35,6 +35,12 @@ jobs:
             echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> .env.production
             echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> .env.production
             echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> .env.production
+            echo "VITE_STRIPE_PRICE_ID=${{ secrets.VITE_STRIPE_PRICE_ID }}" >> .env.production
+            echo "VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY }}" >> .env.production
+            echo "VITE_STRIPE_SECRET_KEY=${{ secrets.VITE_STRIPE_SECRET_KEY }}" >> .env.production
+            echo "VITE_STRIPE_WEBHOOK_SECRET=${{ secrets.VITE_STRIPE_WEBHOOK_SECRET }}" >> .env.production
+            echo "VITE_NEXT_PUBLIC_URL=$${{ secrets.VITE_NEXT_PUBLIC_URL }}" >> .env.production
+
       - name: Build
         run: npm run build
 

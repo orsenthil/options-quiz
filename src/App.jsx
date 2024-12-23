@@ -18,6 +18,9 @@ import { AlertCircle, Loader } from "lucide-react";
 import ConceptQuiz from './components/ConceptQuiz';
 import ProfitLossChart from './components/ProfitLossChart';
 
+import { Routes, Route } from 'react-router-dom';
+import SuccessPage from './components/SuccessPage';
+
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
 const generatePriceLevels = (currentPrice) => {
@@ -399,7 +402,10 @@ const App = () => {
   return (
       <AuthProvider>
         <PaymentProvider>
-          <AppContent/>
+          <Routes>
+            <Route path="/" element={<AppContent />} />
+            <Route path="/success" element={<SuccessPage />} />
+          </Routes>
         </PaymentProvider>
       </AuthProvider>
   );

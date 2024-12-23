@@ -17,11 +17,9 @@ export const checkSubscriptionStatus = async (userId) => {
         }
 
         const data = userDoc.data();
-
-        // Check if the user has an active subscription
         const isActive = data.status === 'active';
 
-        // Store the subscription status in localStorage for persistence
+        // Cache the subscription status
         if (typeof window !== 'undefined') {
             localStorage.setItem('optionsTrainingPremium', JSON.stringify({
                 isPremium: isActive,
@@ -34,7 +32,7 @@ export const checkSubscriptionStatus = async (userId) => {
     } catch (error) {
         console.error('Error checking subscription:', error);
 
-        // Fallback to cached status if available
+        // Fallback to cached status
         if (typeof window !== 'undefined') {
             const cached = localStorage.getItem('optionsTrainingPremium');
             if (cached) {
