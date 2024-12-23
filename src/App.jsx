@@ -62,6 +62,7 @@ const AppContent = () => {
   };
 
   // Modify the strategy change handler
+
   const handleStrategyChange = (strategy) => {
     if (isPremiumStrategy(strategy) && !isPremium) {
       return;
@@ -199,6 +200,45 @@ const AppContent = () => {
     }
   };
 
+  const renderContent = () => {
+    // First check if it's a premium strategy and user doesn't have premium
+    if (isPremiumStrategy(selectedStrategy) && !isPremium) {
+      return (
+          <div className="mt-8">
+            <PaymentGateway />
+          </div>
+      );
+    }
+
+    // If we're here, either it's a free strategy or user has premium
+    // Now we can check for quiz prerequisites
+    const showQuiz = stockPrice &&
+        strikePrice &&
+        premium &&
+        futurePrice &&
+        expirationDate;
+
+    return (
+        <div className="space-y-8">
+          {/* Quiz Section */}
+          {showQuiz && (
+              <div className="border-t pt-8">
+                <ConceptQuiz
+                    stockPrice={stockPrice}
+                    strikePrice={strikePrice}
+                    premium={premium}
+                    symbol={symbol}
+                    expirationDate={expirationDate}
+                    futurePrice={futurePrice}
+                    selectedDate={new Date().toISOString().split('T')[0]}
+                    strategy={selectedStrategy}
+                />
+              </div>
+          )}
+        </div>
+    );
+  };
+
   return (
           <div className="min-h-screen bg-blue-50 p-8">
             <Card className="max-w-4xl mx-auto bg-white mb-8">
@@ -220,8 +260,9 @@ const AppContent = () => {
                     selectedStrategy={selectedStrategy}
                     onStrategyChange={setSelectedStrategy}
                 />
+
                 {/* Stock Selection and P/L Analysis */}
-                <div>
+                  <div>
                   <h3 className="text-xl font-semibold mb-4">Options Analysis Tool</h3>
                   <div className="grid md:grid-cols-2 gap-8">
                     {/* Left column: Stock Selection */}
@@ -343,32 +384,11 @@ const AppContent = () => {
                   </div>
                 </div>
 
-                {/* Show payment gateway for non-premium users */}
-                {user && !isPremium && (
-                    <div className="border-t pt-8">
-                      <PaymentGateway />
-                    </div>
-                )}
+
+                {renderContent()}
 
                 {/* Score history for logged-in users */}
-                {user && <ScoreHistory />}
-
-                {/* Practice Questions Section */}
-                {stockPrice && strikePrice && premium && futurePrice && expirationDate && (
-
-                    <div className="border-t pt-8">
-                      <ConceptQuiz
-                          stockPrice={stockPrice}
-                          strikePrice={strikePrice}
-                          premium={premium}
-                          symbol={symbol}
-                          expirationDate={expirationDate}
-                          futurePrice={futurePrice}
-                          selectedDate={new Date().toISOString().split('T')[0]}  // Today's date
-                          strategy={selectedStrategy}
-                      />
-                    </div>
-                )}
+                {/** {user && <ScoreHistory />} */}
               </CardContent>
             </Card>
           </div>
@@ -379,7 +399,7 @@ const App = () => {
   return (
       <AuthProvider>
         <PaymentProvider>
-          <AppContent />
+          <AppContent/>
         </PaymentProvider>
       </AuthProvider>
   );

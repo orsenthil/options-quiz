@@ -1,12 +1,13 @@
+// src/components/AuthGuard.jsx
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePayment } from '../contexts/PaymentContext';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import PaymentGateway from './PaymentGateway';
+import PaymentGateway from './PaymentGateway'; // Now this import will work
 
 const AuthGuard = ({ children, requiresPremium = false }) => {
-    const { user } = useAuth();
+    const { user, signInWithGoogle } = useAuth();
     const { isPremium } = usePayment();
 
     if (!user) {

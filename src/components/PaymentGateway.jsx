@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+// src/components/PaymentGateway.jsx
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { createCheckoutSession } from '../services/paymentService';
 import { Button } from './ui/button';
@@ -54,11 +55,12 @@ const PaymentGateway = () => {
                     <ul className="list-disc pl-5 space-y-1">
                         <li>Access to advanced options strategies</li>
                         <li>Additional practice scenarios</li>
+                        <li>One time Purchase. Not a subscription.</li>
                     </ul>
                 </div>
                 <div className="text-center">
                     <span className="text-3xl font-bold">$4.99</span>
-                    <span className="text-gray-500 ml-2">one-time payment. life-time subscription</span>
+                    <span className="text-gray-500 ml-2">one-time payment</span>
                 </div>
                 <Button
                     onClick={handleSubscribe}
@@ -71,4 +73,4 @@ const PaymentGateway = () => {
     );
 };
 
-export default PaymentGateway;
+export default PaymentGateway;  // Add the default export
