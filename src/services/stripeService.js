@@ -1,26 +1,29 @@
-const STRIPE_PRICE_ID = import.meta.env.VITE_STRIPE_PRICE_ID;
+import { loadStripe } from '@stripe/stripe-js';
 
-export const createCheckoutSession = async (userId) => {
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+export const createCheckoutSession = async (userId, userEmail) => {
     try {
-        const response = await fetch('/api/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                priceId: STRIPE_PRICE_ID
-            }),
+        const stripe = await stripePromise;
+
+        const { error } = await stripe.redirectToCheckout({
+            lineItems: [
+                {
+                    price: import.meta.env.VITE_STRIPE_PRICE_ID,
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            successUrl: `${window.location.origin}/success?userId=${userId}`,
+            cancelUrl: `${window.location.origin}/`,
+            customerEmail: userEmail, // Pre-fill customer email if available
         });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        if (error) {
+            throw error;
         }
-
-        const session = await response.json();
-        return session;
     } catch (error) {
-        console.error('Error creating checkout session:', error);
+        console.error('Error initiating checkout:', error);
         throw error;
     }
 };

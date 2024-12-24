@@ -1,5 +1,4 @@
 // src/components/PaymentGateway.jsx
-// src/components/PaymentGateway.jsx
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { createCheckoutSession } from '../services/stripeService';
@@ -23,12 +22,11 @@ const PaymentGateway = () => {
         setError(null);
 
         try {
-            const session = await createCheckoutSession(user.uid);
-            window.location.href = session.url;
+            await createCheckoutSession(user.uid, user.email);
+            // Note: No need to handle redirect here as Stripe handles it
         } catch (error) {
             console.error('Payment error:', error);
-            setError('Unable to process payment. Please try again.');
-        } finally {
+            setError('Unable to initiate checkout. Please try again.');
             setLoading(false);
         }
     };
@@ -44,13 +42,16 @@ const PaymentGateway = () => {
                         <h3 className="font-medium">Premium Features Include:</h3>
                         <ul className="list-disc pl-5 space-y-1">
                             <li>Access to Advanced Options Strategies</li>
-                            <li>Lifetime Access for Practice</li>
-                            <li>One time Payment</li>
+                            <li>Long Call Strategy</li>
+                            <li>Cash Secured Put Strategy</li>
+                            <li>Protective Put Strategy</li>
+                            <li>Collar Strategy</li>
+                            <li>Detailed Strategy-Specific Practice Scenarios</li>
                         </ul>
                     </div>
 
                     <div className="text-center py-4">
-                        <span className="text-3xl font-bold">$4.99</span>
+                        <span className="text-3xl font-bold">$49.99</span>
                         <span className="text-gray-500 ml-2">one-time payment</span>
                     </div>
 

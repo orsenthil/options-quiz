@@ -1,23 +1,40 @@
 // src/components/SuccessPage.jsx
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { usePayment } from '../contexts/PaymentContext';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { CheckCircle } from 'lucide-react';
+import { updateSubscriptionStatus } from '../services/paymentService';
 
 const SuccessPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { setIsPremium } = usePayment();
 
     useEffect(() => {
-        setIsPremium(true);
+        const handleSuccess = async () => {
+            const userId = searchParams.get('userId');
+            if (userId) {
+                try {
+                    // Update subscription status in Firebase
+                    await updateSubscriptionStatus(userId, 'active');
+                    // Update local state
+                    setIsPremium(true);
+                } catch (error) {
+                    console.error('Error updating subscription status:', error);
+                }
+            }
 
-        const timer = setTimeout(() => {
-            navigate('/');
-        }, 5000);
+            // Redirect after 5 seconds
+            const timer = setTimeout(() => {
+                navigate('/');
+            }, 5000);
 
-        return () => clearTimeout(timer);
-    }, [navigate, setIsPremium]);
+            return () => clearTimeout(timer);
+        };
+
+        handleSuccess();
+    }, [navigate, setIsPremium, searchParams]);
 
     return (
         <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
