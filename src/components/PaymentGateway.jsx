@@ -57,7 +57,7 @@ const PaymentGateway = () => {
                     </div>
 
                     <div className="text-center py-4">
-                        <span className="text-3xl font-bold">$49.99</span>
+                        <span className="text-3xl font-bold">$4.99</span>
                         <span className="text-gray-500 ml-2">one-time payment</span>
                     </div>
 
