@@ -10,14 +10,13 @@ export const createCheckoutSession = async (userId, userEmail) => {
         const { error } = await stripe.redirectToCheckout({
             lineItems: [
                 {
-                    // Make sure this is your price ID, not product ID
                     price: import.meta.env.VITE_STRIPE_PRICE_ID,
                     quantity: 1,
                 },
             ],
             mode: 'payment',
-            successUrl: `${window.location.origin}/success?userId=${userId}`,
-            cancelUrl: `${window.location.origin}/`,
+            successUrl: `${window.location.origin}${import.meta.env.BASE_URL}#/success?userId=${userId}`, // Updated URL format
+            cancelUrl: `${window.location.origin}${import.meta.env.BASE_URL}`,
             customerEmail: userEmail,
         });
 
