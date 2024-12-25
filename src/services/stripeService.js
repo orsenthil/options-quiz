@@ -1,5 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 
+// Initialize Stripe with your publishable key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 export const createCheckoutSession = async (userId, userEmail) => {
@@ -9,6 +10,7 @@ export const createCheckoutSession = async (userId, userEmail) => {
         const { error } = await stripe.redirectToCheckout({
             lineItems: [
                 {
+                    // Make sure this is your price ID, not product ID
                     price: import.meta.env.VITE_STRIPE_PRICE_ID,
                     quantity: 1,
                 },
@@ -16,10 +18,11 @@ export const createCheckoutSession = async (userId, userEmail) => {
             mode: 'payment',
             successUrl: `${window.location.origin}/success?userId=${userId}`,
             cancelUrl: `${window.location.origin}/`,
-            customerEmail: userEmail, // Pre-fill customer email if available
+            customerEmail: userEmail,
         });
 
         if (error) {
+            console.error('Stripe error:', error);
             throw error;
         }
     } catch (error) {

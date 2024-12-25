@@ -1,4 +1,5 @@
 // src/components/PaymentGateway.jsx
+// src/components/PaymentGateway.jsx
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { createCheckoutSession } from '../services/stripeService';
@@ -22,11 +23,16 @@ const PaymentGateway = () => {
         setError(null);
 
         try {
-            await createCheckoutSession(user.uid, user.email);
-            // Note: No need to handle redirect here as Stripe handles it
+            // Log environment variables (for debugging)
+            console.log('Price ID:', import.meta.env.VITE_STRIPE_PRICE_ID);
+
+            await createCheckoutSession(
+                user.uid,
+                user.email
+            );
         } catch (error) {
             console.error('Payment error:', error);
-            setError('Unable to initiate checkout. Please try again.');
+            setError(error.message || 'Unable to initiate checkout. Please try again.');
             setLoading(false);
         }
     };
