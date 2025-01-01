@@ -46,11 +46,23 @@ const calculatePL = (stockPrice, strikePrice, premium) => {
   return pl.toFixed(2);
 };
 
+const SP500_SYMBOLS = [
+  'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META',
+  'NVDA', 'BRK.B', 'JPM', 'JNJ', 'V',
+  'PG', 'XOM', 'BAC', 'UNH', 'HD',
+  'CVX', 'PFE', 'CSCO', 'INTC', 'VZ'
+];
+
+const getRandomSymbol = () => {
+  const randomIndex = Math.floor(Math.random() * SP500_SYMBOLS.length);
+  return SP500_SYMBOLS[randomIndex];
+};
+
 const AppContent = () => {
   const { user } = useAuth();
   const { isPremium } = usePayment();
   const [selectedStrategy, setSelectedStrategy] = useState(STRATEGY_TYPES.OPTIONS_THEORY);
-  const [symbol, setSymbol] = useState('');
+  const [symbol, setSymbol] = useState(() => getRandomSymbol());
   const [loading, setLoading] = useState(false);
   const [stockPrice, setStockPrice] = useState('');
   const [strikePrice, setStrikePrice] = useState('');
@@ -274,7 +286,7 @@ const AppContent = () => {
                         <Label htmlFor="symbol">Stock Symbol</Label>
                         <Input
                             id="symbol"
-                            placeholder="e.g., AAPL"
+                            placeholder={`Enter symbol (e.g., ${getRandomSymbol()})`}
                             value={symbol}
                             onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                             className="bg-blue-50"
