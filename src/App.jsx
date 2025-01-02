@@ -17,6 +17,7 @@ import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { AlertCircle, Loader } from "lucide-react";
 import ConceptQuiz from './components/ConceptQuiz';
 import ProfitLossChart from './components/ProfitLossChart';
+import { SP500_SYMBOLS } from './sp500list';
 
 import { Routes, Route } from 'react-router-dom';
 import SuccessPage from './components/SuccessPage';
@@ -46,21 +47,13 @@ const calculatePL = (stockPrice, strikePrice, premium) => {
   return pl.toFixed(2);
 };
 
-const SP500_SYMBOLS = [
-  'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META',
-  'NVDA', 'BRK.B', 'JPM', 'JNJ', 'V',
-  'PG', 'XOM', 'BAC', 'UNH', 'HD',
-  'CVX', 'PFE', 'CSCO', 'INTC', 'VZ'
-];
-
-const getRandomSymbol = () => {
-  const randomIndex = Math.floor(Math.random() * SP500_SYMBOLS.length);
-  return SP500_SYMBOLS[randomIndex];
-};
-
 const AppContent = () => {
   const { user } = useAuth();
   const { isPremium } = usePayment();
+  const getRandomSymbol = () => {
+    const randomIndex = Math.floor(Math.random() * SP500_SYMBOLS.length);
+    return SP500_SYMBOLS[randomIndex];
+  };
   const [selectedStrategy, setSelectedStrategy] = useState(STRATEGY_TYPES.OPTIONS_THEORY);
   const [symbol, setSymbol] = useState(() => getRandomSymbol());
   const [loading, setLoading] = useState(false);
