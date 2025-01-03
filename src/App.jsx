@@ -21,6 +21,7 @@ import { SP500_SYMBOLS } from './sp500list';
 
 import { Routes, Route } from 'react-router-dom';
 import SuccessPage from './components/SuccessPage';
+import CompanyDetails from './components/CompanyDetails';
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -64,6 +65,21 @@ const AppContent = () => {
 
   const [expirationDate, setExpirationDate] = useState('');
   const [futurePrice, setFuturePrice] = useState('');
+  const [companyDetails, setCompanyDetails] = useState(null);
+
+  const fetchCompanyDetails = async (stockSymbol) => {
+    try {
+      const response = await fetch(
+          `https://finnhub.io/api/v1/stock/profile2?symbol=${stockSymbol}&token=${FINNHUB_API_KEY}`
+      );
+      const data = await response.json();
+      if (data) {
+        setCompanyDetails(data);
+      }
+    } catch (error) {
+      console.error('Error fetching company details:', error);
+    }
+  };
 
   const isPremiumStrategy = (strategy) => {
     return ![STRATEGY_TYPES.OPTIONS_THEORY, STRATEGY_TYPES.COVERED_CALL].includes(strategy);
@@ -113,6 +129,8 @@ const AppContent = () => {
     setLoading(true);
     try {
       console.log('Starting fetchStockData with:', { symbol });
+      // Fetch company details first
+      await fetchCompanyDetails(symbol);
 
       // Calculate expiration date (10 business days from today )
       const expirationDate = addBusinessDays(new Date(), 10);
@@ -301,37 +319,14 @@ const AppContent = () => {
                         )}
                       </Button>
 
-                      {/* New Information Section */}
+                      {/* Company and Option Details */}
                       {stockPrice && strikePrice && premium && (
-                          <div className="bg-blue-50 p-4 rounded-lg space-y-2">
-                            <h4 className="font-medium text-blue-900">Option Details:</h4>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                              <div>
-                                <span className="text-sm text-gray-600">Current Stock Price:</span>
-                                <p className="font-medium">${stockPrice}</p>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-600">Strike Price:</span>
-                                <p className="font-medium">${strikePrice}</p>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-600">Option Premium:</span>
-                                <p className="font-medium">${premium} per share</p>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-600">Total Cost:</span>
-                                <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-600">Trade Date:</span>
-                                <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-600">Expiration Date:</span>
-                                <p className="font-medium">{expirationDate}</p>
-                              </div>
-                            </div>
-                          </div>
+                          <CompanyDetails
+                              stockPrice={stockPrice}
+                              strikePrice={strikePrice}
+                              premium={premium}
+                              companyDetails={companyDetails}
+                          />
                       )}
 
                       {feedback.show && !feedback.correct && (
