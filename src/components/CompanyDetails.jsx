@@ -18,6 +18,15 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
         return employees.toString();
     };
 
+    const formatShares = (shares) => {
+        if (!shares) return 'N/A';
+        // Convert from millions to billions if greater than 1000M
+        if (shares >= 1000) {
+            return `${(shares / 1000).toFixed(2)}B shares`;
+        }
+        return `${shares.toFixed(2)}M shares`;
+    };
+
     return (
         <div className="space-y-4">
             {/* Company Overview */}
@@ -74,8 +83,8 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
                             <div className="flex items-center space-x-2">
                                 <BarChart3 className="w-4 h-4 text-gray-500" />
                                 <div>
-                                    <p className="text-sm text-gray-500">Exchange</p>
-                                    <p className="font-medium">{companyDetails.exchange || 'N/A'}</p>
+                                    <p className="text-sm text-gray-500">Shares Outstanding</p>
+                                    <p className="font-medium">{formatShares(companyDetails.shareOutstanding)}</p>
                                 </div>
                             </div>
 
