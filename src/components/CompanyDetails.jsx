@@ -5,10 +5,11 @@ import { Building2, Users2, Globe2, BarChart3, DollarSign, Briefcase } from 'luc
 const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) => {
     const formatMarketCap = (marketCap) => {
         if (!marketCap) return 'N/A';
-        if (marketCap >= 1e12) return `$${(marketCap / 1e12).toFixed(2)}T`;
-        if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
-        if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
-        return `$${marketCap.toFixed(2)}`;
+        // Finnhub returns market cap in millions, so:
+        // 3685993.47065598 is actually $3.69T
+        if (marketCap >= 1000000) return `$${(marketCap / 1000000).toFixed(2)}T`; // Trillion
+        if (marketCap >= 1000) return `$${(marketCap / 1000).toFixed(2)}B`; // Billion
+        return `$${marketCap.toFixed(2)}M`; // Million
     };
 
     const formatEmployees = (employees) => {
