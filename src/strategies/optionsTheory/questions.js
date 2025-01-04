@@ -204,15 +204,36 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
             question: `From ${selectedDate} to ${expirationDate}, ${symbol} moved from $${currentPrice} to $${futurePrice}. What was the better choice?`,
             options: [
                 {
-                    text: future > breakEven ?
-                        `Buying the call option (profit: $${((future - strike - prem) * contractSize).toFixed(2)})` :
-                        `Buying the stock directly (profit: $${((future - currentPrice) * contractSize).toFixed(2)})`,
+                    // Calculate both P/L scenarios
+                    text: (() => {
+                        const stockPL = (future - currentPrice) * contractSize;
+                        const optionPL = future > strike ?
+                            ((future - strike - prem) * contractSize) :
+                            -totalPremium;
+
+                        // Compare losses - smaller loss (or bigger profit) is better
+                        const betterChoice = Math.abs(stockPL) < Math.abs(optionPL) || stockPL > optionPL ?
+                            `Buying the stock directly (${stockPL >= 0 ? 'profit' : 'loss'}: $${Math.abs(stockPL).toFixed(2)})` :
+                            `Buying the call option (${optionPL >= 0 ? 'profit' : 'loss'}: $${Math.abs(optionPL).toFixed(2)})`;
+
+                        return betterChoice;
+                    })(),
                     isCorrect: true
                 },
                 {
-                    text: future > breakEven ?
-                        `Buying the stock (profit: $${((future - currentPrice) * contractSize).toFixed(2)})` :
-                        `Buying the call option (loss: $${totalPremium.toFixed(2)})`,
+                    text: (() => {
+                        const stockPL = (future - currentPrice) * contractSize;
+                        const optionPL = future > strike ?
+                            ((future - strike - prem) * contractSize) :
+                            -totalPremium;
+
+                        // Return the worse choice
+                        const worseChoice = Math.abs(stockPL) < Math.abs(optionPL) || stockPL > optionPL ?
+                            `Buying the call option (${optionPL >= 0 ? 'profit' : 'loss'}: $${Math.abs(optionPL).toFixed(2)})` :
+                            `Buying the stock directly (${stockPL >= 0 ? 'profit' : 'loss'}: $${Math.abs(stockPL).toFixed(2)})`;
+
+                        return worseChoice;
+                    })(),
                     isCorrect: false
                 },
                 {
@@ -225,35 +246,41 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                 }
             ],
             explanation: `With ${symbol} moving from $${currentPrice} to $${futurePrice}:
-            Stock P/L: $${((future - currentPrice) * contractSize).toFixed(2)}
-            Option P/L: $${future > strike ? ((future - strike - prem) * contractSize).toFixed(2) : -totalPremium.toFixed(2)}`
+    Stock P/L: ${(future - currentPrice) * contractSize >= 0 ? 'Profit' : 'Loss'} of $${Math.abs((future - currentPrice) * contractSize).toFixed(2)}
+    Option P/L: ${future > strike ?
+                `Profit of $${((future - strike - prem) * contractSize).toFixed(2)}` :
+                `Loss of $${totalPremium.toFixed(2)}`}
+    
+    In this case, ${Math.abs((future - currentPrice) * contractSize) < Math.abs(future > strike ?
+                ((future - strike - prem) * contractSize) :
+                -totalPremium) ? 'the stock position' : 'the options position'} had a smaller loss, making it the better choice.`
         },
         {
             id: 10,
-            question: `For this ${symbol} option between ${selectedDate} and ${expirationDate}, what factor most affected the time value?`,
+            question: `For your ${symbol} $${strike} call option trading at $${prem}, which statement best describes the impact of time value?`,
             options: [
                 {
-                    text: Math.abs(future - currentPrice) > (currentPrice * 0.1) ?
-                        "The significant price movement of the underlying stock" :
-                        "Time decay as expiration approached",
+                    text: strike > currentPrice ?
+                        `Since the option is out-of-the-money by $${(strike - currentPrice).toFixed(2)}, time value represents 100% of the premium` :
+                        `With the option in-the-money by $${(currentPrice - strike).toFixed(2)}, part of the premium is intrinsic value`,
                     isCorrect: true
                 },
                 {
-                    text: "The strike price selection",
+                    text: `Time value is equal to the full premium of $${prem}`,
                     isCorrect: false
                 },
                 {
-                    text: "The contract size of 100 shares",
+                    text: `Time value doesn't matter since expiration is ${Math.round((new Date(expirationDate) - new Date(selectedDate)) / (1000 * 60 * 60 * 24))} days away`,
                     isCorrect: false
                 },
                 {
-                    text: "The original purchase price",
+                    text: `Time value is only relevant if the stock price exceeds $${(currentPrice * 1.1).toFixed(2)}`,
                     isCorrect: false
                 }
             ],
-            explanation: Math.abs(future - currentPrice) > (currentPrice * 0.1) ?
-                `The significant move in ${symbol} from $${currentPrice} to $${futurePrice} had the largest impact on the option's value.` :
-                `With ${symbol} moving only from $${currentPrice} to $${futurePrice}, time decay was the primary factor affecting the option's value.`
+            explanation: strike > currentPrice ?
+                `With ${symbol} at $${currentPrice} and the strike at $${strike}, this call option is out-of-the-money. The entire premium of $${prem} is time value, which will decay as expiration approaches. If the stock doesn't rise above $${strike} by expiration, all time value will be lost.` :
+                `With ${symbol} at $${currentPrice} and the strike at $${strike}, this call has intrinsic value of $${(currentPrice - strike).toFixed(2)} and time value of $${(prem - (currentPrice - strike)).toFixed(2)}. While intrinsic value remains as long as the stock stays above the strike, time value will decay to zero by expiration.`
         }
     ];
 };
