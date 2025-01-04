@@ -266,7 +266,9 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                     isCorrect: true
                 },
                 {
-                    text: `Time value is equal to the full premium of $${prem}`,
+                    text: strike > currentPrice ?
+                        `The option has equal parts of time value and intrinsic value at $${(prem/2).toFixed(2)} each` :
+                        `Time value and intrinsic value are always equal for in-the-money options`,
                     isCorrect: false
                 },
                 {
