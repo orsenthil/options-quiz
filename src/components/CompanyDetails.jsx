@@ -57,30 +57,6 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
                             </div>
 
                             <div className="flex items-center space-x-2">
-                                <Users2 className="w-4 h-4 text-gray-500" />
-                                <div>
-                                    <p className="text-sm text-gray-500">Employees</p>
-                                    <p className="font-medium">{formatEmployees(companyDetails.employeeTotal)}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center space-x-2">
-                                <Globe2 className="w-4 h-4 text-gray-500" />
-                                <div>
-                                    <p className="text-sm text-gray-500">Country</p>
-                                    <p className="font-medium">{companyDetails.country || 'N/A'}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center space-x-2">
-                                <DollarSign className="w-4 h-4 text-gray-500" />
-                                <div>
-                                    <p className="text-sm text-gray-500">Currency</p>
-                                    <p className="font-medium">{companyDetails.currency || 'N/A'}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center space-x-2">
                                 <BarChart3 className="w-4 h-4 text-gray-500" />
                                 <div>
                                     <p className="text-sm text-gray-500">Shares Outstanding</p>
