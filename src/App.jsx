@@ -120,7 +120,7 @@ const AppContent = () => {
       case STRATEGY_TYPES.COVERED_CALL:
         return currentPrice * 1.02; // 2% OTM
       default:
-        return currentPrice;
+        return currentPrice * 1.10;
     }
   };
 
@@ -162,7 +162,7 @@ const AppContent = () => {
         setStockPrice(startingPrice.toFixed(2));
         const strike = calculateStrikePrice(startingPrice, selectedStrategy);
         setStrikePrice(strike.toFixed(2));
-        const premiumMultiplier = selectedStrategy === STRATEGY_TYPES.COVERED_CALL ? 0.02 : 0.03;
+        const premiumMultiplier = selectedStrategy === STRATEGY_TYPES.COVERED_CALL ? 0.02 : 0.01;
         setPremium((startingPrice * premiumMultiplier).toFixed(2));
 
         // Set future (expiration) price with random movement
