@@ -22,6 +22,7 @@ import { SP500_SYMBOLS } from './sp500list';
 import { Routes, Route } from 'react-router-dom';
 import SuccessPage from './components/SuccessPage';
 import CompanyDetails from './components/CompanyDetails';
+import {calculateRequiredCapital, calculateInitialInvestment} from "./utils/capitalCalculations.js";
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -145,76 +146,6 @@ const AppContent = () => {
         return 0.006; // 0.6% of stock price (net premium after both options)
       default:
         return 0.01; // 1% default
-    }
-  };
-
-  const calculateRequiredCapital = (strategy, stockPrice, strikePrice, premium) => {
-    const price = parseFloat(stockPrice);
-    const strike = parseFloat(strikePrice);
-    const prem = parseFloat(premium);
-
-    switch(strategy) {
-      case STRATEGY_TYPES.COVERED_CALL:
-        return {
-          amount: (price * 100).toFixed(2),
-          description: '(100 shares as collateral)'
-        };
-      case STRATEGY_TYPES.CASH_SECURED_PUT:
-        return {
-          amount: (strike * 100).toFixed(2),
-          description: '(cash as collateral)'
-        };
-      case STRATEGY_TYPES.PROTECTIVE_PUT:
-        return {
-          amount: (price * 100).toFixed(2),
-          description: '(100 shares as collateral)'
-        };
-      case STRATEGY_TYPES.LONG_CALL:
-      case STRATEGY_TYPES.OPTIONS_THEORY:
-        return {
-          amount: (prem * 100).toFixed(2),
-          description: '(premium payment required)'
-        };
-      default:
-        return {
-          amount: (prem * 100).toFixed(2),
-          description: ''
-        };
-    }
-  };
-
-  const calculateInitialInvestment = (strategy, stockPrice, strikePrice, premium) => {
-    const price = parseFloat(stockPrice);
-    const strike = parseFloat(strikePrice);
-    const prem = parseFloat(premium) * 100;
-
-    switch(strategy) {
-      case STRATEGY_TYPES.COVERED_CALL:
-        return {
-          amount: prem.toFixed(2),
-          description: '(premium received)'
-        };
-      case STRATEGY_TYPES.CASH_SECURED_PUT:
-        return {
-          amount: prem.toFixed(2),
-          description: '(premium received)'
-        };
-      case STRATEGY_TYPES.PROTECTIVE_PUT:
-        return {
-          amount: prem.toFixed(2),
-          description: '(premium paid for protection)'
-        };
-      case STRATEGY_TYPES.LONG_CALL:
-      case STRATEGY_TYPES.OPTIONS_THEORY:
-        return {
-          amount: prem.toFixed(2),
-          description: '(premium paid for call option)'
-        };
-      default:
-        return {
-          amount: prem.toFixed(2),
-          description: ''
-        };
     }
   };
 
@@ -530,6 +461,10 @@ const AppContent = () => {
                                               <p className="text-sm text-gray-500">Trade Date</p>
                                               <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
                                             </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Expiration Date</p>
+                                              <p className="font-medium">${expirationDate}</p>
+                                            </div>
                                           </div>
                                       ) : (
                                           // Standard Option Details for other strategies
@@ -572,6 +507,10 @@ const AppContent = () => {
                                             <div>
                                               <p className="text-sm text-gray-500">Trade Date</p>
                                               <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Expiration Date</p>
+                                              <p className="font-medium">${expirationDate}</p>
                                             </div>
                                           </div>
                                       )}
