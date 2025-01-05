@@ -463,6 +463,7 @@ const AppContent = () => {
                                 </div>
 
                                 {/* Option Details Card moved here */}
+
                                 <div className="mt-6">
                                   <Card className="bg-white">
                                     <CardContent className="pt-6">
@@ -508,6 +509,24 @@ const AppContent = () => {
                                                 share</p>
                                             </div>
                                             <div>
+                                              <p className="text-sm text-gray-500">Required Collateral</p>
+                                              <p className="font-medium">
+                                                ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                                <span className="text-sm text-gray-500 ml-1">
+                                                {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
+                                              </span>
+                                              </p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Initial Cash Flow</p>
+                                              <p className={`font-medium ${parseFloat(premium) * 0.2 > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                                <span className="text-sm text-gray-500 ml-1">
+                                                {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
+                                              </span>
+                                              </p>
+                                            </div>
+                                            <div>
                                               <p className="text-sm text-gray-500">Trade Date</p>
                                               <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
                                             </div>
@@ -530,6 +549,25 @@ const AppContent = () => {
                                             <div>
                                               <p className="text-sm text-gray-500">Total Cost</p>
                                               <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Required Collateral</p>
+                                              <p className="font-medium">
+                                                ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                                <span className="text-sm text-gray-500 ml-1">
+                                                {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
+                                              </span>
+                                              </p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Initial Cash Flow</p>
+                                              <p className={`font-medium ${selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? 'text-green-600' : 'text-red-600'}`}>
+                                                {selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? '+' : '-'}
+                                                ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                                <span className="text-sm text-gray-500 ml-1">
+                                                {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
+                                              </span>
+                                              </p>
                                             </div>
                                             <div>
                                               <p className="text-sm text-gray-500">Trade Date</p>
