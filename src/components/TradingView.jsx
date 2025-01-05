@@ -21,7 +21,7 @@ const TradingView = ({ symbol }) => {
         script.type = 'text/javascript';
         script.async = true;
         script.innerHTML = JSON.stringify({
-            "interval": "1m",
+            "interval": "1W",
             "width": "100%",
             "isTransparent": false,
             "height": "400",
