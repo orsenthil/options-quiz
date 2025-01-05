@@ -46,9 +46,7 @@ const WikipediaInfo = ({ companyName }) => {
         };
 
         fetchWikiInfo();
-    }, [symbol]);
-
-    if (!symbol) return null;
+    }, [companyName]);
 
     return (
         <Card className="mt-4">
