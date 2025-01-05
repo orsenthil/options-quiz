@@ -14,52 +14,78 @@ export const PaymentProvider = ({ children }) => {
 
     useEffect(() => {
         const checkStatus = async () => {
+            console.log('PaymentContext: Checking status, current user:', user?.uid);
+
             if (user) {
                 try {
-                    // First check local storage
-                    const cachedStatus = localStorage.getItem(`premium_status_${user.uid}`);
+                    // Check local storage first
+                    const storageKey = `premium_status_${user.uid}`;
+                    console.log('Checking localStorage with key:', storageKey);
+
+                    const cachedStatus = localStorage.getItem(storageKey);
+                    console.log('Cached status found:', cachedStatus);
+
                     if (cachedStatus) {
-                        const { isPremium: cachedPremium, timestamp } = JSON.parse(cachedStatus);
-                        // Check if cache is less than 1 hour old
-                        if (Date.now() - timestamp < 3600000) {
-                            setIsPremium(cachedPremium);
+                        const parsed = JSON.parse(cachedStatus);
+                        console.log('Parsed cached status:', parsed);
+
+                        if (Date.now() - parsed.timestamp < 3600000) {
+                            console.log('Using cached premium status:', parsed.isPremium);
+                            setIsPremium(parsed.isPremium);
                             setLoading(false);
                             return;
+                        } else {
+                            console.log('Cache expired, checking Firestore');
                         }
                     }
 
-                    // If no valid cache, check Firestore
+                    // Check Firestore
                     const status = await checkSubscriptionStatus(user.uid);
+                    console.log('Firestore status result:', status);
+
                     setIsPremium(status.isPremium);
+                    console.log('Updated isPremium state to:', status.isPremium);
 
                     // Update cache
-                    localStorage.setItem(`premium_status_${user.uid}`, JSON.stringify({
+                    const newCacheData = {
                         isPremium: status.isPremium,
                         timestamp: Date.now()
-                    }));
+                    };
+                    localStorage.setItem(storageKey, JSON.stringify(newCacheData));
+                    console.log('Updated localStorage cache:', newCacheData);
+
                 } catch (error) {
-                    console.error('Error checking subscription status:', error);
-                } finally {
-                    setLoading(false);
+                    console.error('Error in PaymentContext:', error);
                 }
             } else {
+                console.log('No user found, setting isPremium to false');
                 setIsPremium(false);
-                setLoading(false);
             }
+
+            setLoading(false);
         };
 
         checkStatus();
     }, [user]);
 
-    const updatePremiumStatus = (newStatus) => {
+    const updatePremiumStatus = async (newStatus) => {
+        console.log('Updating premium status to:', newStatus);
+
         setIsPremium(newStatus);
+
         if (user) {
-            localStorage.setItem(`premium_status_${user.uid}`, JSON.stringify({
+            const cacheData = {
                 isPremium: newStatus,
                 timestamp: Date.now()
-            }));
+            };
+            const storageKey = `premium_status_${user.uid}`;
+
+            localStorage.setItem(storageKey, JSON.stringify(cacheData));
+            console.log('Updated cache in updatePremiumStatus:', cacheData);
         }
     };
+
+    console.log('PaymentContext current state:', { isPremium, loading });
 
     const value = {
         isPremium,

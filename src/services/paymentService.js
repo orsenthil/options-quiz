@@ -1,7 +1,6 @@
 // src/services/paymentService.js
 import { db } from '../firebase/config';
 import {
-    collection,
     doc,
     setDoc,
     getDoc,
@@ -9,71 +8,46 @@ import {
 } from 'firebase/firestore';
 
 export const checkSubscriptionStatus = async (userId) => {
+    console.log('Checking subscription status for userId:', userId);
+
     try {
         const userDoc = await getDoc(doc(db, 'subscriptions', userId));
+        console.log('Firestore subscription data:', userDoc.data());
 
         if (!userDoc.exists()) {
+            console.log('No subscription document found');
             return { isPremium: false };
         }
 
         const data = userDoc.data();
         const isActive = data.status === 'active';
-
-        // Cache the subscription status
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('optionsTrainingPremium', JSON.stringify({
-                isPremium: isActive,
-                userId,
-                lastChecked: new Date().toISOString()
-            }));
-        }
+        console.log('Subscription status:', { isActive, status: data.status });
 
         return { isPremium: isActive };
     } catch (error) {
         console.error('Error checking subscription:', error);
-
-        // Fallback to cached status
-        if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('optionsTrainingPremium');
-            if (cached) {
-                const { isPremium, userId: cachedUserId } = JSON.parse(cached);
-                if (userId === cachedUserId) {
-                    return { isPremium };
-                }
-            }
-        }
-
-        throw error;
-    }
-};
-
-export const createCheckoutSession = async (userId) => {
-    try {
-        const response = await fetch('/api/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId,
-                priceId: 'your_stripe_price_id' // You'll need to replace this with your actual Stripe price ID
-            }),
-        });
-
-        const session = await response.json();
-        return session;
-    } catch (error) {
-        console.error('Error creating checkout session:', error);
         throw error;
     }
 };
 
 export const updateSubscriptionStatus = async (userId, status) => {
+    console.log('Updating subscription status:', { userId, status });
+
     try {
-        await setDoc(doc(db, 'subscriptions', userId), {
+        const docRef = doc(db, 'subscriptions', userId);
+        const data = {
             status,
             updatedAt: serverTimestamp()
-        });
+        };
+
+        await setDoc(docRef, data);
+        console.log('Successfully updated subscription in Firestore');
+
+        // Double-check the update
+        const updatedDoc = await getDoc(docRef);
+        console.log('Verified Firestore data:', updatedDoc.data());
+
+        return true;
     } catch (error) {
         console.error('Error updating subscription status:', error);
         throw error;
