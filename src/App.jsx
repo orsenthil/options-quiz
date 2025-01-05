@@ -22,7 +22,6 @@ import { SP500_SYMBOLS } from './sp500list';
 import { Routes, Route } from 'react-router-dom';
 import SuccessPage from './components/SuccessPage';
 import CompanyDetails from './components/CompanyDetails';
-import WikipediaInfo from './components/WikipediaInfo';
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -413,7 +412,6 @@ const AppContent = () => {
 
 
                 {renderContent()}
-
                 {/* Score history for logged-in users */}
                 {/** {user && <ScoreHistory />} */}
               </CardContent>
