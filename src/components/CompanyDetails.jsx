@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Building2, Users2, Globe2, BarChart3, DollarSign, Briefcase } from 'lucide-react';
 import WikipediaInfo from './WikipediaInfo';
+import TradingView from './TradingView';
 
 const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) => {
     const formatMarketCap = (marketCap) => {
@@ -50,7 +51,7 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                             <div className="flex items-center space-x-2">
-                                <Building2 className="w-4 h-4 text-gray-500" />
+                                <Building2 className="w-4 h-4 text-gray-500"/>
                                 <div>
                                     <p className="text-sm text-gray-500">Market Cap</p>
                                     <p className="font-medium">{formatMarketCap(companyDetails.marketCapitalization)}</p>
@@ -58,7 +59,7 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
                             </div>
 
                             <div className="flex items-center space-x-2">
-                                <BarChart3 className="w-4 h-4 text-gray-500" />
+                                <BarChart3 className="w-4 h-4 text-gray-500"/>
                                 <div>
                                     <p className="text-sm text-gray-500">Shares Outstanding</p>
                                     <p className="font-medium">{formatShares(companyDetails.shareOutstanding)}</p>
@@ -66,7 +67,7 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
                             </div>
 
                             <div className="flex items-center space-x-2">
-                                <Briefcase className="w-4 h-4 text-gray-500" />
+                                <Briefcase className="w-4 h-4 text-gray-500"/>
                                 <div>
                                     <p className="text-sm text-gray-500">IPO Date</p>
                                     <p className="font-medium">{companyDetails.ipo || 'N/A'}</p>
@@ -78,7 +79,8 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
             )}
 
             {/* Wikipedia information of the company */}
-            {companyDetails?.name && <WikipediaInfo companyName={companyDetails.name} />}
+            {companyDetails?.name && <WikipediaInfo companyName={companyDetails.name}/>}
+            {companyDetails?.ticker && <TradingView symbol={companyDetails.ticker}/>}
 
         </div>
     );
