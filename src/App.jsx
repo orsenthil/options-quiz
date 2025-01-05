@@ -117,14 +117,106 @@ const AppContent = () => {
   const calculateStrikePrice = (currentPrice, strategy) => {
     switch (strategy) {
       case STRATEGY_TYPES.LONG_CALL:
-        return currentPrice * 1.05; // 5% OTM
+        return currentPrice * 1.05; // 5% OTM (above current price)
       case STRATEGY_TYPES.COVERED_CALL:
-        return currentPrice * 1.08; // 8% OTM
+        return currentPrice * 1.08; // 8% OTM (above current price)
+      case STRATEGY_TYPES.CASH_SECURED_PUT:
+        return currentPrice * 0.92; // 8% OTM (below current price)
+      case STRATEGY_TYPES.PROTECTIVE_PUT:
+        return currentPrice * 0.90; // 10% OTM (below current price)
+      case STRATEGY_TYPES.COLLAR_STRATEGY:
+        return currentPrice * 1.10; // 10% OTM for the call side
       default:
         return currentPrice * 1.10;
     }
   };
 
+  const calculatePremiumMultiplier = (strategy) => {
+    switch (strategy) {
+      case STRATEGY_TYPES.COVERED_CALL:
+        return 0.004; // 0.4% of stock price
+      case STRATEGY_TYPES.LONG_CALL:
+        return 0.015; // 1.5% of stock price
+      case STRATEGY_TYPES.CASH_SECURED_PUT:
+        return 0.008; // 0.8% of stock price (typically less than calls due to put-call skew)
+      case STRATEGY_TYPES.PROTECTIVE_PUT:
+        return 0.012; // 1.2% of stock price
+      case STRATEGY_TYPES.COLLAR_STRATEGY:
+        return 0.006; // 0.6% of stock price (net premium after both options)
+      default:
+        return 0.01; // 1% default
+    }
+  };
+
+  const calculateRequiredCapital = (strategy, stockPrice, strikePrice, premium) => {
+    const price = parseFloat(stockPrice);
+    const strike = parseFloat(strikePrice);
+    const prem = parseFloat(premium);
+
+    switch(strategy) {
+      case STRATEGY_TYPES.COVERED_CALL:
+        return {
+          amount: (price * 100).toFixed(2),
+          description: '(100 shares as collateral)'
+        };
+      case STRATEGY_TYPES.CASH_SECURED_PUT:
+        return {
+          amount: (strike * 100).toFixed(2),
+          description: '(cash as collateral)'
+        };
+      case STRATEGY_TYPES.PROTECTIVE_PUT:
+        return {
+          amount: (price * 100).toFixed(2),
+          description: '(100 shares as collateral)'
+        };
+      case STRATEGY_TYPES.LONG_CALL:
+      case STRATEGY_TYPES.OPTIONS_THEORY:
+        return {
+          amount: (prem * 100).toFixed(2),
+          description: '(premium payment required)'
+        };
+      default:
+        return {
+          amount: (prem * 100).toFixed(2),
+          description: ''
+        };
+    }
+  };
+
+  const calculateInitialInvestment = (strategy, stockPrice, strikePrice, premium) => {
+    const price = parseFloat(stockPrice);
+    const strike = parseFloat(strikePrice);
+    const prem = parseFloat(premium) * 100;
+
+    switch(strategy) {
+      case STRATEGY_TYPES.COVERED_CALL:
+        return {
+          amount: prem.toFixed(2),
+          description: '(premium received)'
+        };
+      case STRATEGY_TYPES.CASH_SECURED_PUT:
+        return {
+          amount: prem.toFixed(2),
+          description: '(premium received)'
+        };
+      case STRATEGY_TYPES.PROTECTIVE_PUT:
+        return {
+          amount: prem.toFixed(2),
+          description: '(premium paid for protection)'
+        };
+      case STRATEGY_TYPES.LONG_CALL:
+      case STRATEGY_TYPES.OPTIONS_THEORY:
+        return {
+          amount: prem.toFixed(2),
+          description: '(premium paid for call option)'
+        };
+      default:
+        return {
+          amount: prem.toFixed(2),
+          description: ''
+        };
+    }
+  };
 
   const fetchStockData = async () => {
     setLoading(true);
@@ -163,7 +255,7 @@ const AppContent = () => {
         setStockPrice(startingPrice.toFixed(2));
         const strike = calculateStrikePrice(startingPrice, selectedStrategy);
         setStrikePrice(strike.toFixed(2));
-        const premiumMultiplier = selectedStrategy === STRATEGY_TYPES.COVERED_CALL ? 0.004 : 0.01;
+        const premiumMultiplier = calculatePremiumMultiplier(selectedStrategy);
         setPremium((startingPrice * premiumMultiplier).toFixed(2));
 
         // Set future (expiration) price with random movement
@@ -389,17 +481,37 @@ const AppContent = () => {
                                           <p className="font-medium">${premium} per share</p>
                                         </div>
                                         <div>
-                                          <p className="text-sm text-gray-500">Total Cost</p>
-                                          <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                                          <p className="text-sm text-gray-500">Required Collateral</p>
+                                          <p className="font-medium">
+                                            ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                            <span className="text-sm text-gray-500 ml-1">
+              {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
+            </span>
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-gray-500">Initial Cash Flow</p>
+                                          <p className={`font-medium ${selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? 'text-green-600' : 'text-red-600'}`}>
+                                            {selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? '+' : '-'}
+                                            ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                            <span className="text-sm text-gray-500 ml-1">
+              {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
+            </span>
+                                          </p>
                                         </div>
                                         <div>
                                           <p className="text-sm text-gray-500">Trade Date</p>
                                           <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
                                         </div>
+                                        <div>
+                                          <p className="text-sm text-gray-500">Expiration Date</p>
+                                          <p className="font-medium">{expirationDate}</p>
+                                        </div>
                                       </div>
                                     </CardContent>
                                   </Card>
                                 </div>
+
                               </>
                           ) : (
                               <p className="text-gray-500">Select a stock symbol and date to see analysis</p>
