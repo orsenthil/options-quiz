@@ -22,6 +22,7 @@ import { SP500_SYMBOLS } from './sp500list';
 import { Routes, Route } from 'react-router-dom';
 import SuccessPage from './components/SuccessPage';
 import CompanyDetails from './components/CompanyDetails';
+import WikipediaInfo from './components/WikipediaInfo';
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -66,6 +67,7 @@ const AppContent = () => {
   const [expirationDate, setExpirationDate] = useState('');
   const [futurePrice, setFuturePrice] = useState('');
   const [companyDetails, setCompanyDetails] = useState(null);
+  const [companyName, setCompanyName] = useState('');
 
   const fetchCompanyDetails = async (stockSymbol) => {
     try {
@@ -290,102 +292,124 @@ const AppContent = () => {
                 {/* Stock Selection and P/L Analysis */}
                   <div>
                   <h3 className="text-xl font-semibold mb-4">Options Analysis Tool</h3>
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {/* Left column: Stock Selection */}
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="symbol">Stock Symbol</Label>
-                        <Input
-                            id="symbol"
-                            placeholder={`Enter symbol (e.g., ${getRandomSymbol()})`}
-                            value={symbol}
-                            onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                            className="bg-blue-50"
-                        />
-                      </div>
+                    <div className="grid md:grid-cols-2 gap-8">
+                      {/* Left column: Stock Selection */}
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="symbol">Stock Symbol</Label>
+                          <Input
+                              id="symbol"
+                              placeholder={`Enter symbol (e.g., ${getRandomSymbol()})`}
+                              value={symbol}
+                              onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+                              className="bg-blue-50"
+                          />
+                        </div>
 
-                      <Button
-                          onClick={generateQuestion}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                          disabled={loading}
-                      >
-                        {loading ? (
-                            <span className="flex items-center">
-                  <Loader className="animate-spin mr-2" />
+                        <Button
+                            onClick={generateQuestion}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                            disabled={loading}
+                        >
+                          {loading ? (
+                              <span className="flex items-center">
+                  <Loader className="animate-spin mr-2"/>
                   Loading...
                 </span>
-                        ) : (
-                            'Analyze Stock'
+                          ) : (
+                              'Analyze Stock'
+                          )}
+                        </Button>
+
+                        {/* Company and Option Details */}
+                        {stockPrice && strikePrice && premium && (
+                            <CompanyDetails
+                                stockPrice={stockPrice}
+                                strikePrice={strikePrice}
+                                premium={premium}
+                                companyDetails={companyDetails}
+                            />
                         )}
-                      </Button>
 
-                      {/* Company and Option Details */}
-                      {stockPrice && strikePrice && premium && (
-                          <CompanyDetails
-                              stockPrice={stockPrice}
-                              strikePrice={strikePrice}
-                              premium={premium}
-                              companyDetails={companyDetails}
-                          />
-                      )}
+                        {feedback.show && !feedback.correct && (
+                            <Alert className="bg-red-50">
+                              <AlertCircle className="text-red-600"/>
+                              <AlertTitle className="text-red-800">Error</AlertTitle>
+                              <AlertDescription className="whitespace-pre-line">
+                                {feedback.message}
+                              </AlertDescription>
+                            </Alert>
+                        )}
 
-                      {feedback.show && !feedback.correct && (
-                          <Alert className="bg-red-50">
-                            <AlertCircle className="text-red-600"/>
-                            <AlertTitle className="text-red-800">Error</AlertTitle>
-                            <AlertDescription className="whitespace-pre-line">
-                              {feedback.message}
-                            </AlertDescription>
-                          </Alert>
-                      )}
+                      </div>
 
-                    </div>
+                      {/* Right column: P/L Analysis */}
+                      <div className="space-y-4">
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <h4 className="font-medium mb-2">Profit/Loss Analysis</h4>
+                          {stockPrice && strikePrice && premium ? (
+                              <>
+                                <ProfitLossChart
+                                    strikePrice={parseFloat(strikePrice)}
+                                    premium={parseFloat(premium)}
+                                    currentPrice={parseFloat(stockPrice)}
+                                    strategy={selectedStrategy}
+                                />
 
-                    {/* Right column: P/L Analysis */}
-                    <div className="space-y-4">
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <h4 className="font-medium mb-2">Profit/Loss Analysis</h4>
-                        {stockPrice && strikePrice && premium ? (
-                            <>
-                              <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div>
-                                  <span className="font-medium">Maximum Loss:</span>
-                                  <p className="text-red-600">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                                <div className="mt-6">
+                                  <h4 className="font-medium mb-2">P/L at different stock prices:</h4>
+                                  <div className="grid grid-cols-3 gap-2">
+                                    {generatePriceLevels(stockPrice).map(price => (
+                                        <div key={price} className="bg-white p-2 rounded">
+                                          <div className="text-sm">At ${price}</div>
+                                          <div
+                                              className={calculatePL(price, strikePrice, premium) >= 0 ? "text-green-600" : "text-red-600"}>
+                                            ${calculatePL(price, strikePrice, premium)}
+                                          </div>
+                                        </div>
+                                    ))}
+                                  </div>
                                 </div>
-                                <div>
-                                  <span className="font-medium">Break-even Price:</span>
-                                  <p>${(parseFloat(strikePrice) + parseFloat(premium)).toFixed(2)}</p>
-                                </div>
-                              </div>
 
-                              <ProfitLossChart
-                                  strikePrice={parseFloat(strikePrice)}
-                                  premium={parseFloat(premium)}
-                                  currentPrice={parseFloat(stockPrice)}
-                                  strategy={selectedStrategy}
-                              />
-
-                              <div className="mt-4">
-                                <h4 className="font-medium mb-2">P/L at different stock prices:</h4>
-                                <div className="grid grid-cols-3 gap-2">
-                                  {generatePriceLevels(stockPrice).map(price => (
-                                      <div key={price} className="bg-white p-2 rounded">
-                                        <div className="text-sm">At ${price}</div>
-                                        <div className={calculatePL(price, strikePrice, premium) >= 0 ? "text-green-600" : "text-red-600"}>
-                                          ${calculatePL(price, strikePrice, premium)}
+                                {/* Option Details Card moved here */}
+                                <div className="mt-6">
+                                  <Card className="bg-white">
+                                    <CardContent className="pt-6">
+                                      <h3 className="text-lg font-semibold mb-4">Option Details</h3>
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                          <p className="text-sm text-gray-500">Current Stock Price</p>
+                                          <p className="font-medium">${stockPrice}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-gray-500">Strike Price</p>
+                                          <p className="font-medium">${strikePrice}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-gray-500">Option Premium</p>
+                                          <p className="font-medium">${premium} per share</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-gray-500">Total Cost</p>
+                                          <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                                        </div>
+                                        <div>
+                                          <p className="text-sm text-gray-500">Trade Date</p>
+                                          <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
                                         </div>
                                       </div>
-                                  ))}
+                                    </CardContent>
+                                  </Card>
                                 </div>
-                              </div>
-                            </>
-                        ) : (
-                            <p className="text-gray-500">Select a stock symbol and date to see analysis</p>
-                        )}
+                              </>
+                          ) : (
+                              <p className="text-gray-500">Select a stock symbol and date to see analysis</p>
+                          )}
+                        </div>
                       </div>
+
                     </div>
                   </div>
-                </div>
 
 
                 {renderContent()}
@@ -403,8 +427,8 @@ const App = () => {
       <AuthProvider>
         <PaymentProvider>
           <Routes>
-            <Route path="/" element={<AppContent />} />
-            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/" element={<AppContent/>}/>
+            <Route path="/success" element={<SuccessPage/>}/>
           </Routes>
         </PaymentProvider>
       </AuthProvider>

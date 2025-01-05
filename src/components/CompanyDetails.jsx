@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Building2, Users2, Globe2, BarChart3, DollarSign, Briefcase } from 'lucide-react';
+import WikipediaInfo from './WikipediaInfo';
 
 const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) => {
     const formatMarketCap = (marketCap) => {
@@ -76,34 +77,9 @@ const CompanyDetails = ({ stockPrice, strikePrice, premium, companyDetails }) =>
                 </Card>
             )}
 
-            {/* Option Details */}
-            <Card className="bg-white">
-                <CardContent className="pt-6">
-                    <h3 className="text-lg font-semibold mb-4">Option Details</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <p className="text-sm text-gray-500">Current Stock Price</p>
-                            <p className="font-medium">${stockPrice}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Strike Price</p>
-                            <p className="font-medium">${strikePrice}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Option Premium</p>
-                            <p className="font-medium">${premium} per share</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Total Cost</p>
-                            <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Trade Date</p>
-                            <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+            {/* Wikipedia information of the company */}
+            {companyDetails?.name && <WikipediaInfo companyName={companyDetails.name} />}
+
         </div>
     );
 };
