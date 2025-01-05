@@ -467,50 +467,80 @@ const AppContent = () => {
                                   <Card className="bg-white">
                                     <CardContent className="pt-6">
                                       <h3 className="text-lg font-semibold mb-4">Option Details</h3>
-                                      <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                          <p className="text-sm text-gray-500">Current Stock Price</p>
-                                          <p className="font-medium">${stockPrice}</p>
-                                        </div>
-                                        <div>
-                                          <p className="text-sm text-gray-500">Strike Price</p>
-                                          <p className="font-medium">${strikePrice}</p>
-                                        </div>
-                                        <div>
-                                          <p className="text-sm text-gray-500">Option Premium</p>
-                                          <p className="font-medium">${premium} per share</p>
-                                        </div>
-                                        <div>
-                                          <p className="text-sm text-gray-500">Required Collateral</p>
-                                          <p className="font-medium">
-                                            ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
-                                            <span className="text-sm text-gray-500 ml-1">
-              {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
-            </span>
-                                          </p>
-                                        </div>
-                                        <div>
-                                          <p className="text-sm text-gray-500">Initial Cash Flow</p>
-                                          <p className={`font-medium ${selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? 'text-green-600' : 'text-red-600'}`}>
-                                            {selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? '+' : '-'}
-                                            ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
-                                            <span className="text-sm text-gray-500 ml-1">
-              {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
-            </span>
-                                          </p>
-                                        </div>
-                                        <div>
-                                          <p className="text-sm text-gray-500">Trade Date</p>
-                                          <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
-                                        </div>
-                                        <div>
-                                          <p className="text-sm text-gray-500">Expiration Date</p>
-                                          <p className="font-medium">{expirationDate}</p>
-                                        </div>
-                                      </div>
+                                      {selectedStrategy === STRATEGY_TYPES.COLLAR_STRATEGY ? (
+                                          // Collar Strategy Details
+                                          <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                              <p className="text-sm text-gray-500">Current Stock Price</p>
+                                              <p className="font-medium">${stockPrice}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Call Strike (Short)</p>
+                                              <p className="font-medium">${strikePrice}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Put Strike (Long)</p>
+                                              <p className="font-medium">${(parseFloat(stockPrice) * 0.9).toFixed(2)}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Call Premium (Received)</p>
+                                              <p className="font-medium text-green-600">+${premium} per share</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Put Premium (Paid)</p>
+                                              <p className="font-medium text-red-600">-${(parseFloat(premium) * 0.8).toFixed(2)} per
+                                                share</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Net Debit/Credit</p>
+                                              <p className={`font-medium ${parseFloat(premium) * 0.2 > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                ${(parseFloat(premium) * 0.2).toFixed(2)} per share
+                                              </p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Maximum Profit</p>
+                                              <p className="font-medium">${((parseFloat(strikePrice) - parseFloat(stockPrice)) + parseFloat(premium) * 0.2).toFixed(2)} per
+                                                share</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Maximum Loss</p>
+                                              <p className="font-medium">${((parseFloat(stockPrice) - parseFloat(stockPrice) * 0.9) - parseFloat(premium) * 0.2).toFixed(2)} per
+                                                share</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Trade Date</p>
+                                              <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                            </div>
+                                          </div>
+                                      ) : (
+                                          // Standard Option Details for other strategies
+                                          <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                              <p className="text-sm text-gray-500">Current Stock Price</p>
+                                              <p className="font-medium">${stockPrice}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Strike Price</p>
+                                              <p className="font-medium">${strikePrice}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Option Premium</p>
+                                              <p className="font-medium">${premium} per share</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Total Cost</p>
+                                              <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                                            </div>
+                                            <div>
+                                              <p className="text-sm text-gray-500">Trade Date</p>
+                                              <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                            </div>
+                                          </div>
+                                      )}
                                     </CardContent>
                                   </Card>
                                 </div>
+
 
                               </>
                           ) : (

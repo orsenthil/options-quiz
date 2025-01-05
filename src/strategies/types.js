@@ -22,7 +22,7 @@ export const STRATEGY_DESCRIPTIONS = {
     [STRATEGY_TYPES.LONG_CALL]: 'Learn how to profit from stock price increases with limited risk using long call options.',
     [STRATEGY_TYPES.COVERED_CALL]: 'Learn how to generate income by selling call options against stock you own.',
     [STRATEGY_TYPES.CASH_SECURED_PUT]: 'Selling the Cash Secured Put obligates you to buy stock at strike price if the option is assigned.',
-    [STRATEGY_TYPES.COLLAR_STRATEGY]: 'Simultaneously running a protective put and a covered call.',
+    [STRATEGY_TYPES.COLLAR_STRATEGY]: 'Protect stock positions while generating income through a combined put and call strategy.',
     [STRATEGY_TYPES.OPTIONS_THEORY]: 'Learn Stock Options',
     [STRATEGY_TYPES.PROTECTIVE_PUT]: 'Purchasing a protective put gives you the right to sell stock you already own at strike price.',
 
