@@ -1,9 +1,53 @@
 // src/components/TradingView.jsx
-import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
+import React, { useEffect, useRef } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 
 const TradingView = ({ symbol }) => {
+    const container = useRef(null);
+    const scriptRef = useRef(null);
+
+    useEffect(() => {
+        if (!symbol) return;
+
+        // Remove any existing script
+        if (scriptRef.current) {
+            scriptRef.current.remove();
+        }
+
+        // Create new script element
+        const script = document.createElement('script');
+        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+        script.type = 'text/javascript';
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+            "interval": "1m",
+            "width": "100%",
+            "isTransparent": false,
+            "height": "400",
+            "symbol": `${symbol}`,
+            "showIntervalTabs": true,
+            "displayMode": "single",
+            "locale": "en",
+            "colorTheme": "light"
+        });
+
+        // Save reference to script
+        scriptRef.current = script;
+
+        // Add script to container
+        if (container.current) {
+            container.current.appendChild(script);
+        }
+
+        // Cleanup
+        return () => {
+            if (scriptRef.current) {
+                scriptRef.current.remove();
+            }
+        };
+    }, [symbol]);
+
     if (!symbol) {
         return null;
     }
@@ -27,8 +71,8 @@ const TradingView = ({ symbol }) => {
                 </a>
             </CardHeader>
             <CardContent>
-                <div className="text-sm text-gray-500">
-                    Click the link above to view detailed technical analysis, charts, and indicators for {symbol} on TradingView.
+                <div className="tradingview-widget-container" ref={container}>
+                    <div className="tradingview-widget-container__widget"></div>
                 </div>
             </CardContent>
         </Card>
