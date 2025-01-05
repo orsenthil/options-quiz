@@ -137,7 +137,7 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
         },
         {
             id: 6,
-            question: `If ${symbol} rises from $${currentPrice.toFixed(2)} to $${(Math.min(strike - 0.01, priceUpTen)).toFixed(2)} (below the $${strike} strike price), compare your returns: holding 100 shares versus a covered call strategy that collects $${(prem * 100).toFixed(2)} premium.`,
+            question: `If ${symbol} changes from $${currentPrice.toFixed(2)} to $${(Math.min(strike - 0.01, priceUpTen)).toFixed(2)} (below the $${strike} strike price), compare your returns: holding 100 shares versus a covered call strategy that collects $${(prem * 100).toFixed(2)} premium.`,
             options: [
                 {
                     text: `Stock only: $${((Math.min(strike - 0.01, priceUpTen) - currentPrice) * 100).toFixed(2)} profit vs. Covered Call: $${((Math.min(strike - 0.01, priceUpTen) - currentPrice) * 100 + (prem * 100)).toFixed(2)} profit`,
@@ -237,26 +237,26 @@ While the stock position shows a loss of ${((priceDownTen - currentPrice) / curr
         },
         {
             id: 10,
-            question: `Let's analyze a covered call trade on ${symbol} that resulted in a loss. At expiration, ${symbol} dropped to $${(currentPrice * 0.85).toFixed(2)} (15% decrease). What is the total loss on this position?`,
+            question: `For ${symbol}, you bought shares at $${currentPrice.toFixed(2)} and sold a call at strike $${strike.toFixed(2)} for $${prem.toFixed(2)} premium. The stock rises sharply to $${(strike * 1.20).toFixed(2)} (20% above strike), and the call now costs $${(strike * 0.22).toFixed(2)} to buy back. What should you do?`,
             options: [
                 {
-                    text: `Loss of $${((currentPrice * 0.15 - prem) * 100).toFixed(2)} (Stock loss of $${(currentPrice * 0.15 * 100).toFixed(2)} partially offset by premium of $${(prem * 100).toFixed(2)})`,
+                    text: `Buy back the call despite a $${((strike * 0.22 - prem) * 100).toFixed(2)} loss to capture the stock's upside potential`,
                     isCorrect: true
                 },
                 {
-                    text: `Loss of $${(currentPrice * 0.15 * 100).toFixed(2)} (only the stock loss)`,
+                    text: `Let the shares be called away at $${strike.toFixed(2)}, limiting your profit to $${((strike - currentPrice + prem) * 100).toFixed(2)}`,
                     isCorrect: false
                 },
                 {
-                    text: `Loss of $${(prem * 100).toFixed(2)} (only the premium)`,
+                    text: `Sell the stock at $${(strike * 1.20).toFixed(2)} while keeping the short call open`,
                     isCorrect: false
                 },
                 {
-                    text: `No loss, as the premium protects against all downside`,
+                    text: `Wait until expiration, since the premium received offsets any lost stock gains`,
                     isCorrect: false
                 }
             ],
-            explanation: `While the premium provides some downside protection ($${(prem * 100).toFixed(2)}), it only partially offsets a significant stock decline (${((prem / currentPrice) * 100).toFixed(1)}% of stock price). The breakeven price was $${(currentPrice - prem).toFixed(2)}, but the stock fell well below this level.`
+            explanation: `When a stock shows strong upward momentum, it may be worth buying back the call even at a loss. Here, letting the stock be called away limits your profit to $${((strike - currentPrice + prem) * 100).toFixed(2)}, while buying back the call for a $${((strike * 0.22 - prem) * 100).toFixed(2)} loss allows you to capture all future gains above $${(strike * 1.20).toFixed(2)}. The loss on the call could be recovered by just a small additional move higher in the stock.`
         }
     ];
 };
