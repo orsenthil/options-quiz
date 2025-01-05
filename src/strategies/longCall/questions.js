@@ -133,7 +133,7 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
         },
         {
             id: 6,
-            question: `Between ${selectedDate} and ${expirationDate}, ${symbol} moved from $${currentPrice} to $${futurePrice}. What was your actual return on investment (ROI)?`,
+            question: `Between ${selectedDate} and ${expirationDate}, ${symbol} moved from $${currentPrice} to $${futurePrice}. What was your return on investment (ROI) for this call option trade?`,
             options: [
                 {
                     text: `${(((future > strike ? (future - strike) * 100 : 0) - maxLoss) / maxLoss * 100).toFixed(2)}%`,
@@ -148,11 +148,20 @@ const generateQuestionBase = (stockPrice, strikePrice, premium, symbol, futurePr
                     isCorrect: false
                 },
                 {
-                    text: `${(future > strike ? ((future - strike) / strike * 100) : -100).toFixed(2)}%`,
+                    text: `${(-100).toFixed(2)}%`,
                     isCorrect: false
                 }
             ],
-            explanation: `ROI = (Profit or Loss / Initial Investment) × 100. Your initial investment was the premium ($${maxLoss.toFixed(2)}), resulting in an ROI of ${(((future > strike ? (future - strike) * 100 : 0) - maxLoss) / maxLoss * 100).toFixed(2)}%`
+            explanation: `Let's calculate the ROI step by step:
+
+1. Initial Investment = Premium Paid = $${maxLoss.toFixed(2)}
+2. Final Value = ${future > strike ? `($${future.toFixed(2)} - $${strike.toFixed(2)}) × 100 = $${((future - strike) * 100).toFixed(2)}` : '$0 (option expires worthless)'}
+3. Total Profit/Loss = Final Value - Premium = ${future > strike ? `$${((future - strike) * 100).toFixed(2)} - $${maxLoss.toFixed(2)} = $${((future - strike) * 100 - maxLoss).toFixed(2)}` : `-$${maxLoss.toFixed(2)}`}
+4. ROI = (Total Profit or Loss / Initial Investment) × 100
+   = ($${((future > strike ? (future - strike) * 100 - maxLoss : -maxLoss)).toFixed(2)} / $${maxLoss.toFixed(2)}) × 100
+   = ${(((future > strike ? (future - strike) * 100 : 0) - maxLoss) / maxLoss * 100).toFixed(2)}%
+
+This ROI calculation is specific to options trading, where your initial investment is the premium paid, not the full stock price. ${future > strike ? 'Since the stock price exceeded the strike price, the option had intrinsic value at expiration.' : 'Since the stock price remained below the strike price, the option expired worthless.'} This demonstrates the leveraged nature of options, where your percentage gains and losses can be much larger than the corresponding stock price movement.`
         },
         {
             id: 7,
