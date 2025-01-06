@@ -23,6 +23,7 @@ import { Routes, Route } from 'react-router-dom';
 import SuccessPage from './components/SuccessPage';
 import CompanyDetails from './components/CompanyDetails';
 import {calculateRequiredCapital, calculateInitialInvestment} from "./utils/capitalCalculations.js";
+import TradingViewChart from "./components/TradingViewChart.jsx";
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -368,9 +369,11 @@ const AppContent = () => {
                       {/* Right column: P/L Analysis */}
                       <div className="space-y-4">
                         <div className="bg-blue-50 p-4 rounded-lg">
-                          <h4 className="font-medium mb-2">Profit/Loss Analysis</h4>
+
+                          <h4 className="font-medium mb-2">Option Analysis</h4>
                           {stockPrice && strikePrice && premium ? (
                               <>
+                                {/*
                                 <ProfitLossChart
                                     strikePrice={parseFloat(strikePrice)}
                                     premium={parseFloat(premium)}
@@ -392,8 +395,10 @@ const AppContent = () => {
                                     ))}
                                   </div>
                                 </div>
+                                */ }
 
                                 {/* Option Details Card moved here */}
+                                <TradingViewChart symbol={symbol}/>
 
                                 <div className="mt-6">
                                   <Card className="bg-white">
