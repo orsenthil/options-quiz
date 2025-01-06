@@ -370,7 +370,7 @@ const AppContent = () => {
                       <div className="space-y-4">
                         <div className="bg-blue-50 p-4 rounded-lg">
 
-                          <h4 className="font-medium mb-2">Option Analysis</h4>
+                          <h4 className="font-medium mb-2">Analysis</h4>
                           {stockPrice && strikePrice && premium ? (
                               <>
                                 {/*
@@ -403,7 +403,7 @@ const AppContent = () => {
                                 <div className="mt-6">
                                   <Card className="bg-white">
                                     <CardContent className="pt-6">
-                                      <h3 className="text-lg font-semibold mb-4">Option Details</h3>
+                                      <h3 className="text-lg font-semibold mb-4">Options Details</h3>
                                       {selectedStrategy === STRATEGY_TYPES.COLLAR_STRATEGY ? (
                                           // Collar Strategy Details
                                           <div className="grid grid-cols-2 gap-4">
