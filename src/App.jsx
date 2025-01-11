@@ -345,14 +345,14 @@ const AppContent = () => {
                         </Button>
 
                         {/* Company and Option Details */}
-                        {stockPrice && strikePrice && premium && (
+                        {stockPrice && (!isPremiumStrategy(selectedStrategy) && strikePrice && premium) ? (
                             <CompanyDetails
                                 stockPrice={stockPrice}
                                 strikePrice={strikePrice}
                                 premium={premium}
                                 companyDetails={companyDetails}
                             />
-                        )}
+                        ) : null}
 
                         {feedback.show && !feedback.correct && (
                             <Alert className="bg-red-50">
@@ -371,7 +371,7 @@ const AppContent = () => {
                         <div className="bg-blue-50 p-4 rounded-lg">
 
                           <h4 className="font-medium mb-2">Analysis</h4>
-                          {stockPrice && strikePrice && premium ? (
+                          {stockPrice && strikePrice && (!isPremiumStrategy(selectedStrategy)) && premium ? (
                               <>
                                 {/*
                                 <ProfitLossChart
@@ -522,7 +522,6 @@ const AppContent = () => {
                                     </CardContent>
                                   </Card>
                                 </div>
-
 
                               </>
                           ) : (
