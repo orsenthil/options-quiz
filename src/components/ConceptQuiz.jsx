@@ -9,6 +9,7 @@ import {generateOptionsTheoryQuestions} from "@/strategies/optionsTheory/questio
 import {generateCollarStrategyQuestions} from "@/strategies/collarStrategy/questions.js";
 import {generateCashSecuredPutQuestions} from "@/strategies/cashSecuredPut/questions.js";
 import {generateProtectivePutQuestions} from "@/strategies/protectivePut/questions.js";
+import {generateLongPutQuestions} from "@/strategies/longPut/questions.js";
 
 
 const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate, strategy }) => {
@@ -119,6 +120,17 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                 case STRATEGY_TYPES.PROTECTIVE_PUT:
                     console.log("Selecting Protectivated Put");
                     return generateProtectivePutQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
+                case STRATEGY_TYPES.LONG_PUT:
+                    console.log("Selecting Long Put");
+                    return generateLongPutQuestions(
                         stockPrice,
                         strikePrice,
                         premium,

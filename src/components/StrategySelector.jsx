@@ -45,6 +45,9 @@ const StrategySelector = ({ selectedStrategy, onStrategyChange }) => {
                         <SelectItem value={STRATEGY_TYPES.COLLAR_STRATEGY}>
                             {STRATEGY_LABELS[STRATEGY_TYPES.COLLAR_STRATEGY]} {!isPremium && '(Premium)'}
                         </SelectItem>
+                        <SelectItem value={STRATEGY_TYPES.LONG_PUT}>
+                            {STRATEGY_LABELS[STRATEGY_TYPES.LONG_PUT]} {!isPremium && '(Premium)'}
+                        </SelectItem>
                     </SelectContent>
                 </Select>
             </div>

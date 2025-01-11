@@ -6,7 +6,8 @@ export const STRATEGY_TYPES = {
     CASH_SECURED_PUT: 'CASH_SECURED_PUT',
     COLLAR_STRATEGY: 'COLLAR_STRATEGY',
     OPTIONS_THEORY: 'OPTIONS_THEORY',
-    PROTECTIVE_PUT: 'PROTECTIVE_PUT'
+    PROTECTIVE_PUT: 'PROTECTIVE_PUT',
+    LONG_PUT: 'LONG_PUT'
 };
 
 export const STRATEGY_LABELS = {
@@ -16,6 +17,7 @@ export const STRATEGY_LABELS = {
     [STRATEGY_TYPES.COLLAR_STRATEGY]: 'Collar Strategy',
     [STRATEGY_TYPES.OPTIONS_THEORY]: 'Options Theory',
     [STRATEGY_TYPES.PROTECTIVE_PUT]: 'Protective Put',
+    [STRATEGY_TYPES.LONG_PUT]: 'Long Put'
 };
 
 export const STRATEGY_DESCRIPTIONS = {
@@ -25,5 +27,6 @@ export const STRATEGY_DESCRIPTIONS = {
     [STRATEGY_TYPES.COLLAR_STRATEGY]: 'Protect stock positions while generating income through a combined put and call strategy.',
     [STRATEGY_TYPES.OPTIONS_THEORY]: 'Learn Stock Options',
     [STRATEGY_TYPES.PROTECTIVE_PUT]: 'Purchasing a protective put gives you the right to sell stock you already own at strike price.',
+    [STRATEGY_TYPES.LONG_PUT]: 'Purchasing a put option, typically in anticipation of a decline in the underlying asset.'
 
 };
