@@ -51,6 +51,9 @@ const StrategySelector = ({ selectedStrategy, onStrategyChange }) => {
                         <SelectItem value={STRATEGY_TYPES.LONG_CALL_SPREAD}>
                             {STRATEGY_LABELS[STRATEGY_TYPES.LONG_CALL_SPREAD]} {!isPremium && '(Premium)'}
                         </SelectItem>
+                        <SelectItem value={STRATEGY_TYPES.LONG_PUT_SPREAD}>
+                            {STRATEGY_LABELS[STRATEGY_TYPES.LONG_PUT_SPREAD]} {!isPremium && '(Premium)'}
+                        </SelectItem>
                     </SelectContent>
                 </Select>
             </div>

@@ -11,6 +11,11 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
     const longCallSpreadshortPremium = prem * 0.8;  // Lower premium for higher strike
     const longCallSpreadNetDebit= longCallSpreadLongPremium - longCallSpreadshortPremium;
 
+    // For long put spread, calculate long and short premiums
+    const longPutSpreadLongPremium = prem;         // Premium paid for higher strike put
+    const longPutSpreadShortPremium = prem * 0.7;  // Premium received for lower strike put
+    const longPutSpreadNetDebit = longPutSpreadLongPremium - longPutSpreadShortPremium;
+
     switch (strategy) {
         case STRATEGY_TYPES.COVERED_CALL:
             return {
@@ -47,6 +52,11 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
                 amount: (longCallSpreadNetDebit * 100).toFixed(2),
                 description: '(net debit for long call spread)'
             };
+        case STRATEGY_TYPES.LONG_PUT_SPREAD:
+            return {
+                amount: (longPutSpreadNetDebit * 100).toFixed(2),
+                description: '(net debit for long put spread)'
+            };
         default:
             return {
                 amount: '0.00',
@@ -63,6 +73,11 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
     const longCallSpreadLongPremium = prem * 1.2;  // Higher premium for lower strike
     const longCallSpreadShortPremium = prem * 0.8;  // Lower premium for higher strike
     const longCallSpreadNetDebit = longCallSpreadLongPremium - longCallSpreadShortPremium;
+
+    // For long put spread, calculate long and short premiums
+    const longPutSpreadLongPremium = prem;         // Premium paid for higher strike put
+    const longPutSpreadShortPremium = prem * 0.7;  // Premium received for lower strike put
+    const longPutSpreadNetDebit = longPutSpreadLongPremium - longPutSpreadShortPremium;
 
     switch (strategy) {
         case STRATEGY_TYPES.COVERED_CALL:
@@ -99,6 +114,11 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
         case STRATEGY_TYPES.LONG_CALL_SPREAD:
             return {
                 amount: (longCallSpreadNetDebit * 100).toFixed(2),
+                description: 'net debit paid'
+            };
+        case STRATEGY_TYPES.LONG_PUT_SPREAD:
+            return {
+                amount: (longPutSpreadNetDebit * 100).toFixed(2),
                 description: 'net debit paid'
             };
         default:

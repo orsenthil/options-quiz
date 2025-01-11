@@ -8,7 +8,8 @@ export const STRATEGY_TYPES = {
     OPTIONS_THEORY: 'OPTIONS_THEORY',
     PROTECTIVE_PUT: 'PROTECTIVE_PUT',
     LONG_PUT: 'LONG_PUT',
-    LONG_CALL_SPREAD: 'LONG_CALL_SPREAD'
+    LONG_CALL_SPREAD: 'LONG_CALL_SPREAD',
+    LONG_PUT_SPREAD: 'LONG_PUT_SPREAD',
 };
 
 export const STRATEGY_LABELS = {
@@ -19,7 +20,8 @@ export const STRATEGY_LABELS = {
     [STRATEGY_TYPES.OPTIONS_THEORY]: 'Options Theory',
     [STRATEGY_TYPES.PROTECTIVE_PUT]: 'Protective Put',
     [STRATEGY_TYPES.LONG_PUT]: 'Long Put',
-    [STRATEGY_TYPES.LONG_CALL_SPREAD]: 'Long Call Spread'
+    [STRATEGY_TYPES.LONG_CALL_SPREAD]: 'Long Call Spread',
+    [STRATEGY_TYPES.LONG_PUT_SPREAD]: 'Long Put Spread',
 };
 
 export const STRATEGY_DESCRIPTIONS = {
@@ -30,6 +32,6 @@ export const STRATEGY_DESCRIPTIONS = {
     [STRATEGY_TYPES.OPTIONS_THEORY]: 'Learn Stock Options',
     [STRATEGY_TYPES.PROTECTIVE_PUT]: 'Purchasing a protective put gives you the right to sell stock you already own at strike price.',
     [STRATEGY_TYPES.LONG_PUT]: 'Purchasing a put option, typically in anticipation of a decline in the underlying asset.',
-    [STRATEGY_TYPES.LONG_CALL_SPREAD]: 'Bullish strategy: Buy lower-strike call, sell higher-strike call. Limited risk and reward, cheaper than buying calls.'
-
+    [STRATEGY_TYPES.LONG_CALL_SPREAD]: 'Bullish strategy: Buy lower-strike call, sell higher-strike call. Limited risk and reward, cheaper than buying calls.',
+    [STRATEGY_TYPES.LONG_PUT_SPREAD]: 'A bearish options strategy that buys a put and sells a lower-strike put to reduce cost but caps profit',
 };
