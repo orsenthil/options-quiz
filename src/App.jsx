@@ -345,7 +345,7 @@ const AppContent = () => {
                         </Button>
 
                         {/* Company and Option Details */}
-                        {stockPrice && (!isPremiumStrategy(selectedStrategy) && strikePrice && premium) ? (
+                        {stockPrice && strikePrice && premium && (!isPremiumStrategy(selectedStrategy) || isPremium) ? (
                             <CompanyDetails
                                 stockPrice={stockPrice}
                                 strikePrice={strikePrice}
@@ -371,7 +371,7 @@ const AppContent = () => {
                         <div className="bg-blue-50 p-4 rounded-lg">
 
                           <h4 className="font-medium mb-2">Analysis</h4>
-                          {stockPrice && strikePrice && (!isPremiumStrategy(selectedStrategy)) && premium ? (
+                          {stockPrice && strikePrice && (!isPremiumStrategy(selectedStrategy) || isPremium) ? (
                               <>
                                 {/*
                                 <ProfitLossChart
