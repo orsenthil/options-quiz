@@ -32,6 +32,11 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
                 amount: (price * 100).toFixed(2),
                 description: '(100 shares)'
             };
+        case STRATEGY_TYPES.LONG_PUT:
+            return {
+                amount: (prem * 100).toFixed(2),
+                description: '(premium for 1 contract)'
+            }
         default:
             return {
                 amount: '0.00',
@@ -72,6 +77,11 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
             return {
                 amount: Math.abs(netDebit * 100).toFixed(2),
                 description: netDebit > 0 ? 'net debit paid' : 'net credit received'
+            };
+        case STRATEGY_TYPES.LONG_PUT:
+            return {
+                amount: (prem * 100).toFixed(2),
+                description: 'premium paid'
             };
         default:
             return {
