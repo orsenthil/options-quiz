@@ -10,6 +10,7 @@ import {generateCollarStrategyQuestions} from "@/strategies/collarStrategy/quest
 import {generateCashSecuredPutQuestions} from "@/strategies/cashSecuredPut/questions.js";
 import {generateProtectivePutQuestions} from "@/strategies/protectivePut/questions.js";
 import {generateLongPutQuestions} from "@/strategies/longPut/questions.js";
+import {generateLongCallSpreadQuestions} from "@/strategies/longCallSpread/questions.js";
 
 
 const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate, strategy }) => {
@@ -139,6 +140,17 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                         expirationDate,
                         selectedDate
                     );
+                case STRATEGY_TYPES.LONG_CALL_SPREAD:
+                    console.log("Selecting Long Call Spread");
+                    return generateLongCallSpreadQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    )
                 default:
                     return [];
             }

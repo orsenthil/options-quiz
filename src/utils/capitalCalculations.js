@@ -6,6 +6,11 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
     const strike = parseFloat(strikePrice);
     const prem = parseFloat(premium);
 
+    // For long call spread, calculate long and short premiums
+    const longCallSpreadLongPremium = prem * 1.2;  // Higher premium for lower strike
+    const longCallSpreadshortPremium = prem * 0.8;  // Lower premium for higher strike
+    const longCallSpreadNetDebit= longCallSpreadLongPremium - longCallSpreadshortPremium;
+
     switch (strategy) {
         case STRATEGY_TYPES.COVERED_CALL:
             return {
@@ -36,7 +41,12 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
             return {
                 amount: (prem * 100).toFixed(2),
                 description: '(premium for 1 contract)'
-            }
+            };
+        case STRATEGY_TYPES.LONG_CALL_SPREAD:
+            return {
+                amount: (longCallSpreadNetDebit * 100).toFixed(2),
+                description: '(net debit for long call spread)'
+            };
         default:
             return {
                 amount: '0.00',
@@ -50,6 +60,9 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
     const strike = parseFloat(strikePrice);
     const prem = parseFloat(premium);
     const putPremium = prem * 0.8; // For collar strategy
+    const longCallSpreadLongPremium = prem * 1.2;  // Higher premium for lower strike
+    const longCallSpreadShortPremium = prem * 0.8;  // Lower premium for higher strike
+    const longCallSpreadNetDebit = longCallSpreadLongPremium - longCallSpreadShortPremium;
 
     switch (strategy) {
         case STRATEGY_TYPES.COVERED_CALL:
@@ -82,6 +95,11 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
             return {
                 amount: (prem * 100).toFixed(2),
                 description: 'premium paid'
+            };
+        case STRATEGY_TYPES.LONG_CALL_SPREAD:
+            return {
+                amount: (longCallSpreadNetDebit * 100).toFixed(2),
+                description: 'net debit paid'
             };
         default:
             return {

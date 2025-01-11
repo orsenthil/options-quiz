@@ -33,20 +33,23 @@ const StrategySelector = ({ selectedStrategy, onStrategyChange }) => {
                         </SelectItem>
 
                         {/* Premium Strategies */}
-                        <SelectItem value={STRATEGY_TYPES.LONG_CALL}>
-                            {STRATEGY_LABELS[STRATEGY_TYPES.LONG_CALL]} {!isPremium && '(Premium)'}
-                        </SelectItem>
                         <SelectItem value={STRATEGY_TYPES.CASH_SECURED_PUT}>
                             {STRATEGY_LABELS[STRATEGY_TYPES.CASH_SECURED_PUT]} {!isPremium && '(Premium)'}
                         </SelectItem>
                         <SelectItem value={STRATEGY_TYPES.PROTECTIVE_PUT}>
                             {STRATEGY_LABELS[STRATEGY_TYPES.PROTECTIVE_PUT]} {!isPremium && '(Premium)'}
                         </SelectItem>
-                        <SelectItem value={STRATEGY_TYPES.COLLAR_STRATEGY}>
-                            {STRATEGY_LABELS[STRATEGY_TYPES.COLLAR_STRATEGY]} {!isPremium && '(Premium)'}
+                        <SelectItem value={STRATEGY_TYPES.LONG_CALL}>
+                            {STRATEGY_LABELS[STRATEGY_TYPES.LONG_CALL]} {!isPremium && '(Premium)'}
                         </SelectItem>
                         <SelectItem value={STRATEGY_TYPES.LONG_PUT}>
                             {STRATEGY_LABELS[STRATEGY_TYPES.LONG_PUT]} {!isPremium && '(Premium)'}
+                        </SelectItem>
+                        <SelectItem value={STRATEGY_TYPES.COLLAR_STRATEGY}>
+                            {STRATEGY_LABELS[STRATEGY_TYPES.COLLAR_STRATEGY]} {!isPremium && '(Premium)'}
+                        </SelectItem>
+                        <SelectItem value={STRATEGY_TYPES.LONG_CALL_SPREAD}>
+                            {STRATEGY_LABELS[STRATEGY_TYPES.LONG_CALL_SPREAD]} {!isPremium && '(Premium)'}
                         </SelectItem>
                     </SelectContent>
                 </Select>
