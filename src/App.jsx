@@ -3,11 +3,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import { PaymentProvider } from './contexts/PaymentContext';
 import { useAuth } from './contexts/AuthContext';
 import { usePayment } from './contexts/PaymentContext';
-import AuthGuard from './components/AuthGuard';
 import StrategySelector from './components/StrategySelector';
 import { STRATEGY_TYPES } from './strategies/types';
 import Login from './components/Login';
-import ScoreHistory from './components/ScoreHistory';
 import PaymentGateway from './components/PaymentGateway';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
@@ -16,7 +14,6 @@ import { Label } from "./components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { AlertCircle, Loader } from "lucide-react";
 import ConceptQuiz from './components/ConceptQuiz';
-import ProfitLossChart from './components/ProfitLossChart';
 import { SP500_SYMBOLS } from './sp500list';
 
 import { Routes, Route } from 'react-router-dom';
@@ -26,29 +23,6 @@ import {calculateRequiredCapital, calculateInitialInvestment} from "./utils/capi
 import TradingViewChart from "./components/TradingViewChart.jsx";
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
-
-const generatePriceLevels = (currentPrice) => {
-  const prices = [];
-  const basePrice = parseFloat(currentPrice);
-  prices.push(
-      (basePrice * 0.9).toFixed(2),
-      basePrice.toFixed(2),
-      (basePrice * 1.1).toFixed(2)
-  );
-  return prices;
-};
-
-const calculatePL = (stockPrice, strikePrice, premium) => {
-  const price = parseFloat(stockPrice);
-  const strike = parseFloat(strikePrice);
-  const prem = parseFloat(premium);
-
-  const pl = price > strike
-      ? ((price - strike) * 100) - (prem * 100)
-      : -prem * 100;
-
-  return pl.toFixed(2);
-};
 
 const AppContent = () => {
   const { user } = useAuth();
@@ -373,29 +347,6 @@ const AppContent = () => {
                           <h4 className="font-medium mb-2">Analysis</h4>
                           {stockPrice && strikePrice && (!isPremiumStrategy(selectedStrategy) || isPremium) ? (
                               <>
-                                {/*
-                                <ProfitLossChart
-                                    strikePrice={parseFloat(strikePrice)}
-                                    premium={parseFloat(premium)}
-                                    currentPrice={parseFloat(stockPrice)}
-                                    strategy={selectedStrategy}
-                                />
-
-                                <div className="mt-6">
-                                  <h4 className="font-medium mb-2">P/L at different stock prices:</h4>
-                                  <div className="grid grid-cols-3 gap-2">
-                                    {generatePriceLevels(stockPrice).map(price => (
-                                        <div key={price} className="bg-white p-2 rounded">
-                                          <div className="text-sm">At ${price}</div>
-                                          <div
-                                              className={calculatePL(price, strikePrice, premium) >= 0 ? "text-green-600" : "text-red-600"}>
-                                            ${calculatePL(price, strikePrice, premium)}
-                                          </div>
-                                        </div>
-                                    ))}
-                                  </div>
-                                </div>
-                                */ }
 
                                 {/* Option Details Card moved here */}
                                 <TradingViewChart symbol={symbol}/>
