@@ -65,11 +65,6 @@ const AppContent = () => {
   // Modify the strategy change handler
 
   const handleStrategyChange = (strategy) => {
-    if (isPremiumStrategy(strategy) && !isPremium) {
-      return;
-    }
-
-    // Reset all state variables
     setSelectedStrategy(strategy);
     setSymbol(() => getRandomSymbol()); // Set a new random symbol
     setStockPrice('');
