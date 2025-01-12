@@ -68,12 +68,19 @@ const AppContent = () => {
     if (isPremiumStrategy(strategy) && !isPremium) {
       return;
     }
+
+    // Reset all state variables
     setSelectedStrategy(strategy);
-    // Reset other states as needed
-    setSymbol('');
+    setSymbol(() => getRandomSymbol()); // Set a new random symbol
     setStockPrice('');
     setStrikePrice('');
     setPremium('');
+    setFuturePrice('');
+    setExpirationDate('');
+    setCompanyDetails(null);
+    setCompanyName('');
+    setFeedback({ show: false, correct: false, message: '' });
+    setLoading(false);
   };
 
 
@@ -289,7 +296,7 @@ const AppContent = () => {
               <CardContent className="space-y-8">
                 <StrategySelector
                     selectedStrategy={selectedStrategy}
-                    onStrategyChange={setSelectedStrategy}
+                    onStrategyChange={handleStrategyChange}
                 />
 
                 {/* Stock Selection and P/L Analysis */}
