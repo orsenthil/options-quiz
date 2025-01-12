@@ -21,6 +21,7 @@ import SuccessPage from './components/SuccessPage';
 import CompanyDetails from './components/CompanyDetails';
 import {calculateRequiredCapital, calculateInitialInvestment} from "./utils/capitalCalculations.js";
 import TradingViewChart from "./components/TradingViewChart.jsx";
+import Footer from './components/Footer';
 
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 
@@ -273,7 +274,7 @@ const AppContent = () => {
   };
 
   return (
-          <div className="min-h-screen bg-purple-gradient p-8">
+          <div className="bg-purple-gradient p-8">
             <Card className="max-w-4xl mx-auto bg-white mb-8">
               <CardHeader>
                 <div className="flex justify-between items-center">
@@ -747,6 +748,7 @@ const App = () => {
             <Route path="/success" element={<SuccessPage/>}/>
           </Routes>
         </PaymentProvider>
+        <Footer />
       </AuthProvider>
   );
 };
