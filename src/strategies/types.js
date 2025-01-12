@@ -10,6 +10,7 @@ export const STRATEGY_TYPES = {
     LONG_PUT: 'LONG_PUT',
     LONG_CALL_SPREAD: 'LONG_CALL_SPREAD',
     LONG_PUT_SPREAD: 'LONG_PUT_SPREAD',
+    FIG_LEAF: 'FIG_LEAF'
 };
 
 export const STRATEGY_LABELS = {
@@ -22,6 +23,7 @@ export const STRATEGY_LABELS = {
     [STRATEGY_TYPES.LONG_PUT]: 'Long Put',
     [STRATEGY_TYPES.LONG_CALL_SPREAD]: 'Long Call Spread',
     [STRATEGY_TYPES.LONG_PUT_SPREAD]: 'Long Put Spread',
+    [STRATEGY_TYPES.FIG_LEAF]: 'Fig Leaf',
 };
 
 export const STRATEGY_DESCRIPTIONS = {
@@ -34,4 +36,5 @@ export const STRATEGY_DESCRIPTIONS = {
     [STRATEGY_TYPES.LONG_PUT]: 'Purchasing a put option, typically in anticipation of a decline in the underlying asset.',
     [STRATEGY_TYPES.LONG_CALL_SPREAD]: 'Bullish strategy: Buy lower-strike call, sell higher-strike call. Limited risk and reward, cheaper than buying calls.',
     [STRATEGY_TYPES.LONG_PUT_SPREAD]: 'A bearish options strategy that buys a put and sells a lower-strike put to reduce cost but caps profit',
+    [STRATEGY_TYPES.FIG_LEAF]: 'Fig Leaf strategy buys a deep ITM LEAPS call while selling short-term OTM calls against it, creating a leveraged covered call.'
 };

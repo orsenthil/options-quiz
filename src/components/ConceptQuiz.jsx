@@ -12,6 +12,7 @@ import {generateProtectivePutQuestions} from "@/strategies/protectivePut/questio
 import {generateLongPutQuestions} from "@/strategies/longPut/questions.js";
 import {generateLongCallSpreadQuestions} from "@/strategies/longCallSpread/questions.js";
 import {generateLongPutSpreadQuestions} from "@/strategies/longPutSpread/questions.js";
+import {generateFigLeafQuestions} from "@/strategies/figLeaf/questions.js";
 
 
 const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, expirationDate, selectedDate, strategy }) => {
@@ -163,8 +164,20 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                         expirationDate,
                         selectedDate
                     );
+                case STRATEGY_TYPES.FIG_LEAF:
+                    console.log("Selecting Fig Leaf Strategy");
+                    return generateFigLeafQuestions(
+                        stockPrice,
+                        strikePrice,
+                        premium,
+                        symbol,
+                        futurePrice,
+                        expirationDate,
+                        selectedDate
+                    );
                 default:
                     return [];
+
             }
         }
 

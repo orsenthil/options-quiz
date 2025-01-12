@@ -102,6 +102,8 @@ const AppContent = () => {
         return currentPrice * 0.90; // 10% OTM (below current price)
       case STRATEGY_TYPES.COLLAR_STRATEGY:
         return currentPrice * 1.10; // 10% OTM for the call side
+      case STRATEGY_TYPES.FIG_LEAF:
+        return currentPrice * 1.05; // 5% OTM for short call
       default:
         return currentPrice * 1.10;
     }
@@ -119,6 +121,8 @@ const AppContent = () => {
         return 0.012; // 1.2% of stock price
       case STRATEGY_TYPES.COLLAR_STRATEGY:
         return 0.006; // 0.6% of stock price (net premium after both options)
+      case STRATEGY_TYPES.FIG_LEAF:
+        return 0.015; // 1.5% of stock price for short-term call
       default:
         return 0.01; // 1% default
     }
@@ -132,7 +136,9 @@ const AppContent = () => {
       await fetchCompanyDetails(symbol);
 
       // Calculate expiration date (10 business days from today )
-      const expirationDate = addBusinessDays(new Date(), 10);
+      const expirationDate = selectedStrategy === STRATEGY_TYPES.FIG_LEAF
+          ? addBusinessDays(new Date(), 30)  // 30 days for short call
+          : addBusinessDays(new Date(), 10); // Default 10 days
 
       // Fetch current price using quote endpoint
       const response = await fetch(
@@ -366,7 +372,81 @@ const AppContent = () => {
                                         const maxProfit = (shortStrike - longStrike) - netDebit;
                                         const maxLoss = netDebit;
 
+                                        // Calculate Fig Leaf specific values
+                                        const leapsStrike = parseFloat(stockPrice) * 0.8; // 20% ITM
+                                        const leapsPremium = parseFloat(premium) * 3;     // LEAPS premium typically 3x higher
+                                        const figLeafNetDebit = leapsPremium - parseFloat(premium);
+
                                         switch(selectedStrategy) {
+                                          case STRATEGY_TYPES.FIG_LEAF:
+                                            return (
+                                                <div className="grid grid-cols-2 gap-4">
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Current Stock Price</p>
+                                                    <p className="font-medium">${stockPrice}</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">LEAPS Strike (ITM)</p>
+                                                    <p className="font-medium">${leapsStrike.toFixed(2)}</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Short Call Strike (OTM)</p>
+                                                    <p className="font-medium">${strikePrice}</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">LEAPS Premium (Paid)</p>
+                                                    <p className="font-medium text-red-600">-${leapsPremium.toFixed(2)} per share</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Short Call Premium (Received)</p>
+                                                    <p className="font-medium text-green-600">+${premium} per share</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Net Debit</p>
+                                                    <p className="font-medium text-red-600">
+                                                      ${figLeafNetDebit.toFixed(2)} per share
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Required Collateral</p>
+                                                    <p className="font-medium">
+                                                      ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                                      <span className="text-sm text-gray-500 ml-1">
+                        {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
+                    </span>
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Initial Investment</p>
+                                                    <p className="font-medium text-red-600">
+                                                      ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
+                                                      <span className="text-sm text-gray-500 ml-1">
+                        {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
+                    </span>
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Trade Date</p>
+                                                    <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Expiration Date</p>
+                                                    <p className="font-medium">{expirationDate}</p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Break-even Price</p>
+                                                    <p className="font-medium">
+                                                      ${(leapsStrike + figLeafNetDebit).toFixed(2)}
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p className="text-sm text-gray-500">Maximum Loss</p>
+                                                    <p className="font-medium">
+                                                      ${(figLeafNetDebit * 100).toFixed(2)} (net debit paid)
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                            );
                                           case STRATEGY_TYPES.LONG_PUT_SPREAD:
                                             return (
                                                 <div className="grid grid-cols-2 gap-4">

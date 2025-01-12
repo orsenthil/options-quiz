@@ -1,6 +1,13 @@
 // src/utils/capitalCalculations.js
 import { STRATEGY_TYPES } from '../strategies/types';
 
+// Constants for Fig Leaf strategy calculations
+const FIG_LEAF_CONSTANTS = {
+    LEAPS_ITM_PERCENTAGE: 0.20,    // LEAPS strike is 20% ITM
+    LEAPS_PREMIUM_MULTIPLIER: 3,    // LEAPS premium is typically 3x the short-term premium
+};
+
+
 export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, premium) => {
     const price = parseFloat(stockPrice);
     const strike = parseFloat(strikePrice);
@@ -15,6 +22,11 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
     const longPutSpreadLongPremium = prem;         // Premium paid for higher strike put
     const longPutSpreadShortPremium = prem * 0.7;  // Premium received for lower strike put
     const longPutSpreadNetDebit = longPutSpreadLongPremium - longPutSpreadShortPremium;
+
+    // Calculate LEAPS strike (20% ITM) and premium
+    const leapsStrike = price * (1 - FIG_LEAF_CONSTANTS.LEAPS_ITM_PERCENTAGE);
+    const leapsPremium = prem * FIG_LEAF_CONSTANTS.LEAPS_PREMIUM_MULTIPLIER;
+    const figLeafNetDebit = leapsPremium - prem; // LEAPS premium - short call premium
 
     switch (strategy) {
         case STRATEGY_TYPES.COVERED_CALL:
@@ -57,6 +69,12 @@ export const calculateRequiredCapital = (strategy, stockPrice, strikePrice, prem
                 amount: (longPutSpreadNetDebit * 100).toFixed(2),
                 description: '(net debit for long put spread)'
             };
+        case STRATEGY_TYPES.FIG_LEAF:
+
+            return {
+                amount: (figLeafNetDebit * 100).toFixed(2),
+                description: '(net debit for LEAPS + short call)'
+            };
         default:
             return {
                 amount: '0.00',
@@ -78,6 +96,10 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
     const longPutSpreadLongPremium = prem;         // Premium paid for higher strike put
     const longPutSpreadShortPremium = prem * 0.7;  // Premium received for lower strike put
     const longPutSpreadNetDebit = longPutSpreadLongPremium - longPutSpreadShortPremium;
+
+    // Calculate LEAPS premium and net debit
+    const figLeafLeapsPremium = prem * FIG_LEAF_CONSTANTS.LEAPS_PREMIUM_MULTIPLIER;
+    const figLeafInitialDebit = figLeafLeapsPremium - prem;
 
     switch (strategy) {
         case STRATEGY_TYPES.COVERED_CALL:
@@ -120,6 +142,12 @@ export const calculateInitialInvestment = (strategy, stockPrice, strikePrice, pr
             return {
                 amount: (longPutSpreadNetDebit * 100).toFixed(2),
                 description: 'net debit paid'
+            };
+        case STRATEGY_TYPES.FIG_LEAF:
+            // Calculate LEAPS premium and net debit
+            return {
+                amount: (figLeafInitialDebit * 100).toFixed(2),
+                description: 'net debit paid (LEAPS premium - short call premium)'
             };
         default:
             return {
