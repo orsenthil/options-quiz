@@ -6,13 +6,10 @@ const Footer = () => {
     const socialLinkClasses = "text-[#646cff] hover:text-[#535bf2] transition-colors duration-300";
 
     return (
-        <div className="p-8">
+        <div className="px-8 pb-8">
             <Card className="max-w-4xl mx-auto bg-white">
                 <CardContent className="py-6">
                     <div className="flex flex-col items-center space-y-4">
-                        <p className="text-sm text-gray-600">
-                            2025. Options Trading Guide. All rights reserved.
-                        </p>
                         <div className="flex justify-center items-center space-x-6">
                             <a
                                 href="https://twitter.com/phoe6"
@@ -43,7 +40,8 @@ const Footer = () => {
                             </a>
                         </div>
                     </div>
-                    <div  className="flex flex-col items-center space-y-6 space-x-6 p-4">
+
+                    <div className="flex flex-col items-center space-y-6 space-x-6 p-4">
                         <p className="text-xs text-gray-500">
                             This application helps users learn options trading. No statement on this website should be
                             construed as a recommendation to purchase or sell securities or as investment advice. Before
