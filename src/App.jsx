@@ -273,12 +273,12 @@ const AppContent = () => {
   };
 
   return (
-          <div className="min-h-screen bg-blue-50 p-8">
+          <div className="min-h-screen bg-purple-gradient p-8">
             <Card className="max-w-4xl mx-auto bg-white mb-8">
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <div>
-                    <CardTitle className="text-2xl font-bold text-blue-900">
+                    <CardTitle className="text-2xl font-bold text-purple-900">
                       Options Trading Guide
                     </CardTitle>
                     <CardDescription>
@@ -307,13 +307,13 @@ const AppContent = () => {
                               placeholder={`Enter symbol (e.g., ${getRandomSymbol()})`}
                               value={symbol}
                               onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                              className="bg-blue-50"
+                              className="bg-purple-50"
                           />
                         </div>
 
                         <Button
                             onClick={generateQuestion}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                             disabled={loading}
                         >
                           {loading ? (
@@ -350,7 +350,7 @@ const AppContent = () => {
 
                       {/* Right column: P/L Analysis */}
                       <div className="space-y-4">
-                        <div className="bg-blue-50 p-4 rounded-lg">
+                        <div className="bg-purple-50 p-4 rounded-lg">
 
                           <h4 className="font-medium mb-2">Analysis</h4>
                           {stockPrice && strikePrice && (!isPremiumStrategy(selectedStrategy) || isPremium) ? (

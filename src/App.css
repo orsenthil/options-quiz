@@ -11,11 +11,13 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  /* Change from blue to purple */
+  filter: drop-shadow(0 0 2em rgba(128, 0, 128, 0.6));  /* Was #646cffaa */
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em rgba(75, 0, 130, 0.6));   /* Was #61dafbaa */
 }
 
 @keyframes logo-spin {

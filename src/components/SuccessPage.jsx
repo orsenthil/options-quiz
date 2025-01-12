@@ -57,7 +57,7 @@ const SuccessPage = () => {
     }, [navigate, setIsPremium, user]);
 
     return (
-        <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-purple-50 flex items-center justify-center p-4">
             <Card className="max-w-md w-full">
                 <CardHeader>
                     <div className="flex items-center justify-center mb-4">

@@ -237,7 +237,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
     if (questions.length === 0) {
         console.log('Rendering empty state - no questions available');
         return (
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <p>Generate a question to see practical scenarios based on real market data.</p>
             </div>
         );
@@ -269,7 +269,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                                         : index === selectedAnswer
                                             ? 'bg-red-100 border-red-500'
                                             : 'bg-gray-50'
-                                    : 'bg-gray-50 hover:bg-blue-50'
+                                    : 'bg-gray-50 hover:bg-purple-50'
                             } border transition-colors`}
                         >
                             {option}
@@ -278,7 +278,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                 </div>
 
                 {showExplanation && (
-                    <div className="mt-4 p-4 bg-blue-50 rounded">
+                    <div className="mt-4 p-4 bg-purple-50 rounded">
                         <p className="text-sm">{question.explanation}</p>
                     </div>
                 )}
@@ -288,7 +288,7 @@ const ConceptQuiz = ({ stockPrice, strikePrice, premium, symbol, futurePrice, ex
                         {currentQuestion < questions.length - 1 ? (
                             <Button
                                 onClick={handleNextQuestion}
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-purple-600 hover:bg-purple-700 text-white"
                             >
                                 Next Question
                             </Button>
