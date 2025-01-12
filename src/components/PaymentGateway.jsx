@@ -47,12 +47,10 @@ const PaymentGateway = () => {
                     <div className="space-y-2">
                         <h3 className="font-medium">Premium Features Include:</h3>
                         <ul className="list-disc pl-5 space-y-1">
-                            <li>Access to Advanced Options Strategies</li>
-                            <li>Long Call Strategy</li>
-                            <li>Cash Secured Put Strategy</li>
-                            <li>Protective Put Strategy</li>
-                            <li>Collar Strategy</li>
+                            <li>Access to All Advanced Options Strategies</li>
                             <li>Detailed Strategy-Specific Practice Scenarios</li>
+                            <li>Easily get the value for your money by practicing scenarios.</li>
+                            <li>One time Payment. Lifetime Subscription.</li>
                         </ul>
                     </div>
 
