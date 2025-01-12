@@ -275,7 +275,7 @@ const AppContent = () => {
 
   return (
           <div className="p-8">
-            <Card className="max-w-4xl mx-auto bg-white mb-8">
+            <Card className="w-full max-w-4xl mx-auto bg-white mb-8">
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <div>
@@ -743,7 +743,7 @@ const App = () => {
   return (
       <div className="min-h-screen bg-purple-gradient"> {/* Move gradient to top level */}
         <div className="flex flex-col min-h-screen">
-          <div className="flex-grow p-8 space-y-8">
+          <div className="flex-grow p-2 sm:p-4 md:p-8 space-y-8">
             <AuthProvider>
               <PaymentProvider>
                 <Routes>
