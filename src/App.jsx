@@ -743,7 +743,7 @@ const App = () => {
   return (
       <div className="min-h-screen bg-purple-gradient"> {/* Move gradient to top level */}
         <div className="flex flex-col min-h-screen">
-          <div className="flex-grow p-8">
+          <div className="flex-grow p-8 space-y-8">
             <AuthProvider>
               <PaymentProvider>
                 <Routes>
@@ -752,8 +752,8 @@ const App = () => {
                 </Routes>
               </PaymentProvider>
             </AuthProvider>
+            <Footer />
           </div>
-          <Footer />
         </div>
       </div>
   );
