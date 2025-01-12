@@ -363,7 +363,7 @@ const AppContent = () => {
                                 <div className="mt-6">
                                   <Card className="bg-white">
                                     <CardContent className="pt-6">
-                                      <h3 className="text-lg font-semibold mb-4">Options Details</h3>
+                                      <h3 className="text-lg font-semibold mb-4">Options Details for Practice Scenario</h3>
 
                                       {(() => {
                                         // Calculate common values used across strategies
