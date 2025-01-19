@@ -383,36 +383,36 @@ const AppContent = () => {
                                         switch(selectedStrategy) {
                                           case STRATEGY_TYPES.FIG_LEAF:
                                             return (
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                   <div>
                                                     <p className="text-sm text-gray-500">Current Stock Price</p>
-                                                    <p className="font-medium">${stockPrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${stockPrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">LEAPS Strike (ITM)</p>
-                                                    <p className="font-medium">${leapsStrike.toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${leapsStrike.toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Short Call Strike (OTM)</p>
-                                                    <p className="font-medium">${strikePrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${strikePrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">LEAPS Premium (Paid)</p>
-                                                    <p className="font-medium text-red-600">-${leapsPremium.toFixed(2)} per share</p>
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">-${leapsPremium.toFixed(2)} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Short Call Premium (Received)</p>
-                                                    <p className="font-medium text-green-600">+${premium} per share</p>
+                                                    <p className="font-medium text-green-600 break-words whitespace-normal">+${premium} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Net Debit</p>
-                                                    <p className="font-medium text-red-600">
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">
                                                       ${figLeafNetDebit.toFixed(2)} per share
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Required Collateral</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                         {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -421,7 +421,7 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Initial Investment</p>
-                                                    <p className="font-medium text-red-600">
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">
                                                       ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                         {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -430,21 +430,21 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Trade Date</p>
-                                                    <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{new Date().toISOString().split('T')[0]}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Expiration Date</p>
-                                                    <p className="font-medium">{expirationDate}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{expirationDate}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Break-even Price</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${(leapsStrike + figLeafNetDebit).toFixed(2)}
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Loss</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${(figLeafNetDebit * 100).toFixed(2)} (net debit paid)
                                                     </p>
                                                   </div>
@@ -452,54 +452,54 @@ const AppContent = () => {
                                             );
                                           case STRATEGY_TYPES.LONG_PUT_SPREAD:
                                             return (
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                   <div>
                                                     <p className="text-sm text-gray-500">Current Stock Price</p>
-                                                    <p className="font-medium">${stockPrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${stockPrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Long Put Strike (Higher)</p>
-                                                    <p className="font-medium">${strikePrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${strikePrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Short Put Strike (Lower)</p>
-                                                    <p className="font-medium">${(parseFloat(strikePrice) * 0.95).toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${(parseFloat(strikePrice) * 0.95).toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Long Put Premium (Paid)</p>
-                                                    <p className="font-medium text-red-600">-${premium} per share</p>
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">-${premium} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Short Put Premium (Received)</p>
-                                                    <p className="font-medium text-green-600">+${(parseFloat(premium) * 0.7).toFixed(2)} per share</p>
+                                                    <p className="font-medium text-green-600 break-words whitespace-normal">+${(parseFloat(premium) * 0.7).toFixed(2)} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Net Debit</p>
-                                                    <p className="font-medium text-red-600">
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">
                                                       ${(parseFloat(premium) * 0.3).toFixed(2)} per share
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Profit</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${((parseFloat(strikePrice) - parseFloat(strikePrice) * 0.95) - parseFloat(premium) * 0.3).toFixed(2)} per share
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Loss</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${(parseFloat(premium) * 0.3).toFixed(2)} per share
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Break-even Price</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${(parseFloat(strikePrice) - parseFloat(premium) * 0.3).toFixed(2)}
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Required Collateral</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                         {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -508,7 +508,7 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Initial Investment</p>
-                                                    <p className="font-medium text-red-600">
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">
                                                       ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                         {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -517,58 +517,58 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Trade Date</p>
-                                                    <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{new Date().toISOString().split('T')[0]}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Expiration Date</p>
-                                                    <p className="font-medium">{expirationDate}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{expirationDate}</p>
                                                   </div>
                                                 </div>
                                             );
                                           case STRATEGY_TYPES.LONG_CALL_SPREAD:
                                             return (
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                   <div>
                                                     <p className="text-sm text-gray-500">Current Stock Price</p>
-                                                    <p className="font-medium">${stockPrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${stockPrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Long Call Strike</p>
-                                                    <p className="font-medium">${longStrike.toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${longStrike.toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Short Call Strike</p>
-                                                    <p className="font-medium">${shortStrike.toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${shortStrike.toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Long Call Premium (Paid)</p>
-                                                    <p className="font-medium text-red-600">-${longPremium.toFixed(2)} per share</p>
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">-${longPremium.toFixed(2)} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Short Call Premium (Received)</p>
-                                                    <p className="font-medium text-green-600">+${shortPremium.toFixed(2)} per share</p>
+                                                    <p className="font-medium text-green-600 break-words whitespace-normal">+${shortPremium.toFixed(2)} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Net Debit</p>
-                                                    <p className="font-medium text-red-600">
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">
                                                       ${netDebit.toFixed(2)} per share
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Profit</p>
-                                                    <p className="font-medium">${maxProfit.toFixed(2)} per share</p>
+                                                    <p className="font-medium break-words whitespace-normal">${maxProfit.toFixed(2)} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Loss</p>
-                                                    <p className="font-medium">${maxLoss.toFixed(2)} per share</p>
+                                                    <p className="font-medium break-words whitespace-normal">${maxLoss.toFixed(2)} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Break-even Price</p>
-                                                    <p className="font-medium">${(longStrike + netDebit).toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${(longStrike + netDebit).toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Required Collateral</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                       {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -577,7 +577,7 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Initial Investment</p>
-                                                    <p className="font-medium text-red-600">
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">
                                                       ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                       {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -586,58 +586,58 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Trade Date</p>
-                                                    <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{new Date().toISOString().split('T')[0]}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Expiration Date</p>
-                                                    <p className="font-medium">{expirationDate}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{expirationDate}</p>
                                                   </div>
                                                 </div>
                                             );
 
                                           case STRATEGY_TYPES.COLLAR_STRATEGY:
                                             return (
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                   <div>
                                                     <p className="text-sm text-gray-500">Current Stock Price</p>
-                                                    <p className="font-medium">${stockPrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${stockPrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Call Strike (Short)</p>
-                                                    <p className="font-medium">${strikePrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${strikePrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Put Strike (Long)</p>
-                                                    <p className="font-medium">${(parseFloat(stockPrice) * 0.9).toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${(parseFloat(stockPrice) * 0.9).toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Call Premium (Received)</p>
-                                                    <p className="font-medium text-green-600">+${premium} per share</p>
+                                                    <p className="font-medium text-green-600 break-words whitespace-normal">+${premium} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Put Premium (Paid)</p>
-                                                    <p className="font-medium text-red-600">-${(parseFloat(premium) * 0.8).toFixed(2)} per
+                                                    <p className="font-medium text-red-600 break-words whitespace-normal">-${(parseFloat(premium) * 0.8).toFixed(2)} per
                                                       share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Net Debit/Credit</p>
-                                                    <p className={`font-medium ${parseFloat(premium) * 0.2 > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                    <p className={`font-medium break-words whitespace-normal ${parseFloat(premium) * 0.2 > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                       ${(parseFloat(premium) * 0.2).toFixed(2)} per share
                                                     </p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Profit</p>
-                                                    <p className="font-medium">${((parseFloat(strikePrice) - parseFloat(stockPrice)) + parseFloat(premium) * 0.2).toFixed(2)} per
+                                                    <p className="font-medium break-words whitespace-normal">${((parseFloat(strikePrice) - parseFloat(stockPrice)) + parseFloat(premium) * 0.2).toFixed(2)} per
                                                       share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Maximum Loss</p>
-                                                    <p className="font-medium">${((parseFloat(stockPrice) - parseFloat(stockPrice) * 0.9) - parseFloat(premium) * 0.2).toFixed(2)} per
+                                                    <p className="font-medium break-words whitespace-normal">${((parseFloat(stockPrice) - parseFloat(stockPrice) * 0.9) - parseFloat(premium) * 0.2).toFixed(2)} per
                                                       share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Required Collateral</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                                                 {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -646,7 +646,7 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Initial Cash Flow</p>
-                                                    <p className={`font-medium ${parseFloat(premium) * 0.2 > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                    <p className={`font-medium break-words whitespace-normal ${parseFloat(premium) * 0.2 > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                       ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                                                 {calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -655,37 +655,37 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Trade Date</p>
-                                                    <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{new Date().toISOString().split('T')[0]}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Expiration Date</p>
-                                                    <p className="font-medium">${expirationDate}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${expirationDate}</p>
                                                   </div>
                                                 </div>
                                             );
 
                                           default:
                                             return (
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                   <div>
                                                     <p className="text-sm text-gray-500">Current Stock Price</p>
-                                                    <p className="font-medium">${stockPrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${stockPrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Strike Price</p>
-                                                    <p className="font-medium">${strikePrice}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${strikePrice}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Option Premium</p>
-                                                    <p className="font-medium">${premium} per share</p>
+                                                    <p className="font-medium break-words whitespace-normal">${premium} per share</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Total Cost</p>
-                                                    <p className="font-medium">${(parseFloat(premium) * 100).toFixed(2)}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${(parseFloat(premium) * 100).toFixed(2)}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Required Collateral</p>
-                                                    <p className="font-medium">
+                                                    <p className="font-medium break-words whitespace-normal">
                                                       ${calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
                                                 {calculateRequiredCapital(selectedStrategy, stockPrice, strikePrice, premium).description}
@@ -694,7 +694,7 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Initial Cash Flow</p>
-                                                    <p className={`font-medium ${selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? 'text-green-600' : 'text-red-600'}`}>
+                                                    <p className={`font-medium break-words whitespace-normal ${selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? 'text-green-600' : 'text-red-600'}`}>
                                                       {selectedStrategy === STRATEGY_TYPES.COVERED_CALL || selectedStrategy === STRATEGY_TYPES.CASH_SECURED_PUT ? '+' : '-'}
                                                       ${calculateInitialInvestment(selectedStrategy, stockPrice, strikePrice, premium).amount}
                                                       <span className="text-sm text-gray-500 ml-1">
@@ -704,11 +704,11 @@ const AppContent = () => {
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Trade Date</p>
-                                                    <p className="font-medium">{new Date().toISOString().split('T')[0]}</p>
+                                                    <p className="font-medium break-words whitespace-normal">{new Date().toISOString().split('T')[0]}</p>
                                                   </div>
                                                   <div>
                                                     <p className="text-sm text-gray-500">Expiration Date</p>
-                                                    <p className="font-medium">${expirationDate}</p>
+                                                    <p className="font-medium break-words whitespace-normal">${expirationDate}</p>
                                                   </div>
                                                 </div>
                                           )
